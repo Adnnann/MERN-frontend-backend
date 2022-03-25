@@ -18,6 +18,7 @@ import BookIcon from '../../assets/images/bookIcon.png'
 import HeaderButtons from "./HeaderButtons";
 import { Grid } from "@mui/material";
 import Item from '@mui/material/Grid'
+import { Button, ButtonGroup } from "@mui/material";
 
 
 const useStyles = makeStyles(theme=>({
@@ -66,11 +67,24 @@ const useStyles = makeStyles(theme=>({
     
 }))
 
-const Header = () => {
+const BooksHeader = () => {
 
   const classes = useStyles()
+  const navigate = useNavigate()
 //const userData = useSelector(getUserSigninData)
 //const displayUserName = useSelector(getUserDataToDisplay)
+
+const redirectToAuthors = () => {
+    navigate('/authors')
+}
+
+const redirectToBooks = () => {
+    navigate('/books')
+}
+
+const redirectToPublishers = () => {
+    navigate('/publishers')
+}
 
     return(
         
@@ -91,7 +105,14 @@ const Header = () => {
                 </Typography>
 
                 <div style={{marginLeft:'auto', marginTop:"2%"}}>
-                    <HeaderButtons />  
+                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                    <Button onClick={redirectToPublishers}
+                    color='info'>Publishers</Button>
+                    <Button onClick={redirectToBooks}
+                    color='info'>Books</Button>
+                    <Button onClick={redirectToAuthors}
+                    color='info'>Authors</Button>
+                </ButtonGroup> 
                 </div> 
 
             </Grid> 
@@ -105,4 +126,4 @@ const Header = () => {
 }
     
 
-export default Header
+export default BooksHeader

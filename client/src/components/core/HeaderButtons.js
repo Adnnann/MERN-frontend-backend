@@ -4,19 +4,22 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import HomeIcon from '@mui/icons-material/Home';
 import GroupsIcon from '@mui/icons-material/Groups';
 import LoginIcon from '@mui/icons-material/Login';
+import { useNavigate } from 'react-router-dom';
 
 export default function HeaderButtons() {
 
-  const login = () => {
+  const navigate = useNavigate()
 
+  const login = () => {
+      navigate('/login')
   }
 
   const redirectToHomePage = () => {
-
+      navigate('/')
   }
 
   const redirectToTeamPage = () => {
-    
+      navigate('/ourTeam')
   }
   
   return (
