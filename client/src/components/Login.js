@@ -1,12 +1,13 @@
 import React, {useState} from "react"
 import { Icon, Typography, TextField, Button, Card, CardContent, CardActions, InputLabel } from "@mui/material"
 import { makeStyles } from "@mui/styles"
-// import { signinUser, 
-//             getUserSigninData, 
+import { fetchBooks, getBooks, getUserLoginData, login, 
+//             getuserLoginData, 
 //             userToken, 
 //             getUserToken, 
 //             fetchUserTransactions,
-//             userDataToDisplay} from "../features/usersSlice"
+//             userDataToDisplay
+} from "../features/librarySlice"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { useEffect } from "react"
@@ -49,7 +50,8 @@ const useStyles = makeStyles(theme=>({
     const Login = () => {
     
         const classes = useStyles()
-       // const userSigninData = useSelector(getUserSigninData)
+        const userLoginData = useSelector(getUserLoginData)
+       // const userLoginData = useSelector(getuserLoginData)
         const dispatch = useDispatch()
         const navigate = useNavigate()
        // const token = useSelector(getUserToken)
@@ -59,23 +61,22 @@ const useStyles = makeStyles(theme=>({
         })
     
         //if user has token (is logged) redirected to protected page
-        // useEffect(()=>{
-        //     if(userSigninData.hasOwnProperty("token")){
-        //         dispatch(fetchUserTransactions())
-        //         dispatch(userDataToDisplay({user:userSigninData.user}))
-        //         dispatch(userToken())
-        //         navigate('/dashboard')
-        //     }
+        useEffect(()=>{
+
+            if(userLoginData.hasOwnProperty("token")){
+                dispatch(fetchBooks())
+                navigate('/books')
+            }
             
-        // },[userSigninData])
+        },[userLoginData])
     
         // send request to server to login user and in case there are errors collect error
         const clickSubmit = () => {
             const user = {
-                username: values.email || undefined,
+                username: values.username || undefined,
                 password: values.password || undefined
             }
-           // dispatch(signinUser(user))    
+           dispatch(login(user))    
         }
     
         // get values from input fields
@@ -83,10 +84,6 @@ const useStyles = makeStyles(theme=>({
             setValues({...values, [name]: event.target.value})
         }
 
-        const redirectToSignup = () => {
-            navigate('/signup')
-        }
-    
 return(
 
 <>
@@ -112,29 +109,44 @@ return(
         <Grid item xs={12} md={12} lg={12} xl={12}>
 
             <Typography variant='h6' style={{display:'inline-flex', marginRight:'10px'}}>Password</Typography>
-            <input id="email" className={classes.inputFields}
-            value={values.email} onChange={handleChange('password')} 
+            <input id="password" className={classes.inputFields}
+            value={values.password} onChange={handleChange('password')} 
             />
                 
         </Grid>
 
                     {/* { //display error returned from server
-                        Object.keys(userSigninData).length !== 0 && (
+                        Object.keys(userLoginData).length !== 0 && (
                             <Typography component='p' color='error'>
                                 <Icon color='error' className={classes.error}></Icon>
-                                {userSigninData.error}
+                                {userLoginData.error}
                             </Typography>
                         )
                     } */}
     
                     <Grid item xs={12} md={12} lg={12} xl={12} style={{marginTop:'10px', marginBottom:'10px'}}>
 
-                    <Button color='primary' variant="contained" onClick={clickSubmit} 
-                    className={classes.loginButton}>
-                        Login
-                    </Button>
+                        <Button color='primary' variant="contained" onClick={clickSubmit} 
+                        className={classes.loginButton}>
+                            Login
+                        </Button>
     
-            </Grid>
+                    </Grid>
+
+                    
+                    <Grid item xs={12} md={12} lg={12} xl={12}>
+
+                    {//display error returned from server
+                        Object.keys(userLoginData).length !== 0 && (
+                            <Typography component='p' color='error'>
+                                <Icon color='error' className={classes.error}></Icon>
+                                {userLoginData.error}
+                            </Typography>
+                        )
+                    } 
+    
+                    </Grid>
+                    
     
                     
     </Grid>

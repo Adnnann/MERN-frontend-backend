@@ -20,8 +20,8 @@ const Footer = () => {
     const classes = useStyles()
 
     return(
-    <BottomNavigation className={classes.footer}> 
-        <AppBar style={{position:'relative'}} color="primary">
+    <div className={classes.footer}> 
+        <AppBar style={{position:'relative'}} color="primary" >
         <Container maxWidth="md">
           <Toolbar>
             <Typography variant="body1" color="inherit" textAlign={'center'} margin='0 auto'  >
@@ -30,7 +30,7 @@ const Footer = () => {
           </Toolbar>
         </Container>
       </AppBar>
-    </BottomNavigation>
+    </div>
     )
 }
 

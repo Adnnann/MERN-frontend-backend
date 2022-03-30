@@ -2,6 +2,7 @@ import React from "react";
 import { AppBar } from '@mui/material';
 import { Toolbar } from '@mui/material';
 import Box from '@mui/material/Box'
+import { Button } from "@mui/material";
 // import {signoutUser, 
 //         getUserSigninData,
 //         cleanStore,
@@ -18,7 +19,8 @@ import BookIcon from '../../assets/images/bookIcon.png'
 import HeaderButtons from "./HeaderButtons";
 import { Grid } from "@mui/material";
 import Item from '@mui/material/Grid'
-
+import LogoutIcon from '@mui/icons-material/Logout'
+import { logout } from '../../features/librarySlice';
 
 const useStyles = makeStyles(theme=>({
     card: {
@@ -69,16 +71,20 @@ const useStyles = makeStyles(theme=>({
 const Header = () => {
 
   const classes = useStyles()
+  const dispatch = useDispatch()
 //const userData = useSelector(getUserSigninData)
 //const displayUserName = useSelector(getUserDataToDisplay)
 
-    return(
+
+    
+return(
         
     <AppBar position="static"  >
 
         <Toolbar style={{marginBottom:'0'}}>
 
             <Grid container>
+                
                 <Box
                 component="img"
                 sx={{height:  64, marginTop:'10px', marginRight:'0', display:'inline-flex', justifyContent:'right'}}
@@ -95,6 +101,8 @@ const Header = () => {
                 </div> 
 
             </Grid> 
+
+          
                 
         </Toolbar>
     

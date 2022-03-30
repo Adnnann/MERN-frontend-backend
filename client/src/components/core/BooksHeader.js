@@ -19,7 +19,8 @@ import HeaderButtons from "./HeaderButtons";
 import { Grid } from "@mui/material";
 import Item from '@mui/material/Grid'
 import { Button, ButtonGroup } from "@mui/material";
-
+import { getUserLoginData, logout, resetStore } from '../../features/librarySlice';
+import LogoutIcon from '@mui/icons-material/Logout'
 
 const useStyles = makeStyles(theme=>({
     card: {
@@ -55,14 +56,21 @@ const useStyles = makeStyles(theme=>({
         maxWidth: 80,
       },
     rightButtons: {
-        backgroundColor: 'white',
         marginRight: '2px',
-        marginTop:'50px',
+        marginTop:'2%',
         textTransform:'none',
-        marginLeft:'auto'
+        marginLeft:'auto',
+        [theme.breakpoints.down('xs')]:{
+            marginLeft:'0px',
+            marginTop:'0'
+        }
     },
-    welcomeMessage:{
-        paddingLeft:"20px"
+    logoutButton:{
+        display:'inline-flex',
+        [theme.breakpoints.up('md')]:{
+            display:'none',
+            color:'red'
+        }
     }
     
 }))
@@ -71,6 +79,8 @@ const BooksHeader = () => {
 
   const classes = useStyles()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
 //const userData = useSelector(getUserSigninData)
 //const displayUserName = useSelector(getUserDataToDisplay)
 
@@ -86,16 +96,32 @@ const redirectToPublishers = () => {
     navigate('/publishers')
 }
 
+const logOut = () => {
+    dispatch(logout())
+    dispatch(resetStore())
+    navigate('/')
+}
+
     return(
         
     <AppBar position="static"  >
+
+ <Button 
+        style={{width:'120px', marginLeft:'auto'}}
+        onClick={logOut} 
+        variant='text'
+        color='info' startIcon={<LogoutIcon />}>Logout</Button> 
 
         <Toolbar style={{marginBottom:'0'}}>
 
             <Grid container>
                 <Box
                 component="img"
-                sx={{height:  64, marginTop:'10px', marginRight:'0', display:'inline-flex', justifyContent:'right'}}
+                sx={{height: 64, 
+                marginTop:'10px', 
+                marginRight:'0', 
+                display:'inline-flex', 
+                justifyContent:'right'}}
                 alt="Book"
                 src={BookIcon}
                 />
@@ -104,16 +130,20 @@ const redirectToPublishers = () => {
                     Library
                 </Typography>
 
-                <div style={{marginLeft:'auto', marginTop:"2%"}}>
-                <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                <div className={classes.rightButtons}>
+                <ButtonGroup variant="contained" >
                     <Button onClick={redirectToPublishers}
                     color='info'>Publishers</Button>
                     <Button onClick={redirectToBooks}
                     color='info'>Books</Button>
                     <Button onClick={redirectToAuthors}
                     color='info'>Authors</Button>
+                
                 </ButtonGroup> 
+   
                 </div> 
+
+                
 
             </Grid> 
                 

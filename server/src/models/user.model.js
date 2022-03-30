@@ -1,54 +1,27 @@
 import mongoose from 'mongoose'
 import crypto from 'crypto'
-import mongooseUniqueValidator from 'mongoose-beautiful-unique-validation'
-import validate from 'mongoose-validator'
-
-const emailValidator = [
-    validate({
-        validator: 'isEmail',
-        message: 'Please enter valid email address '
-    })
-]
-
-const nicknameValidator = [
-    validate({
-        validator: 'isAlphanumeric',
-        message: 'Only letters and numbers are allowed in nickname'
-    })
-]
 
 const UserSchema = new mongoose.Schema({
-    firstName:{
-        type:String,
-        required:'First name is required',
-        trim: true,
-        maxlength: [15, "First name must be less than 15 characters"],
-        match: [/^[A-Za-z\s]+$/, 'Only letters are allowed in first name']
-        
+    id:{
+        type:Number,  
     },
-    lastName:{
+    name:{
         type:String,
-        required:'Last name is required',
+        required:'Name is required',
         trim: true,
-        maxlength: [20, "Last name must be less than 20 characters"],
-        match: [/^[A-Za-z\s]+$/, 'Only letters are allowed in last name']
+
     },
-    nickname:{
+    username:{
         type:String,
-        unique:'Nickname already exists.',
-        required:'Nickname is required',
+        required:'Username is required',
         trim: true,
-        validate: nicknameValidator
-    },
-    email:{
-        type:String,
-        unique:'Email already exists.',
-        required:'Email is required',
-        validate: emailValidator
     },
     created: {
         type: Date,
         default: Date.now
+    },
+    role:{
+        type: String,
     },
     updated: Date,
     hashed_password:{
@@ -63,6 +36,9 @@ UserSchema.virtual('password')
     this._password = password,
     this.salt = this.makeSalt(),
     this.hashed_password = this.encryptPassword(password)
+
+    console.log(this.hashed_password)
+
 })
 
 UserSchema.methods = {
@@ -76,6 +52,7 @@ UserSchema.methods = {
             .createHmac('sha1', this.salt)
             .update(password)
             .digest('hex')
+            
         }catch(err){
             return err
         }
@@ -90,5 +67,5 @@ UserSchema.path('hashed_password').validate(function(v){
         this.invalidate('password', 'Password must be at least 6 characters')
     }
 }, null)
-UserSchema.plugin(mongooseUniqueValidator)
+
 export default mongoose.model('User', UserSchema)

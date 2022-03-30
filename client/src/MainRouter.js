@@ -4,10 +4,12 @@ import OurTeam from './components/OurTeam'
 import Footer from './components/core/Footer'
 import Login from './components/Login'
 import Books from './components/Books'
+import EditBook from './components/EditBook'
 
 const MainRouter = () => {
     return(
         <Router>
+        <EditBook />
             <Routes>
                 <Route path='/' element={<Home />}></Route>
                 <Route path='/ourTeam' element={<OurTeam />}></Route>

@@ -4,7 +4,9 @@ import cors from 'cors'
 import helmet from 'helmet';
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
-import transactionRoutes from './routes/transaction.routes'
+import booksRoutes from './routes/books.routes'
+import publishersRoutes from './routes/publishers.routes'
+import bookImageRoutes from './routes/book.image.routes'
 import passport from 'passport';
 import cookieParser from 'cookie-parser'
 
@@ -21,7 +23,11 @@ app.use(cookieParser())
 
 app.use('/', authRoutes)
 app.use('/', userRoutes)
-app.use('/', transactionRoutes)
+app.use('/', booksRoutes)
+app.use('/', publishersRoutes)
+
+app.use('/images', express.static('images'));
+app.use('/', bookImageRoutes);
 
 app.use((err, req, res, next) => {
     if(err.name === 'UnauthorizedError'){

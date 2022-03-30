@@ -6,13 +6,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
-// import { getFilter, 
-//         getUserTransactions, 
-//         getCurrencyExchangeRate, 
-//         getGroupingVar, 
-//         setDeleteId, 
-//         setOpenDeleteModal } from '../../features/usersSlice';
+import { 
+        editBookModal, 
+        getBooks
+} from '../features/librarySlice';
 import { useSelector, useDispatch } from 'react-redux';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -22,16 +19,27 @@ import FilterBooks from "./FilterBooks";
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import { TextField } from "@mui/material";
-
-// or
-import { Input } from '@mui/material';
+import { editBook } from "../features/librarySlice";
+import { 
+        getUserLoginData,
+        fetchPublishers
+} from "../features/librarySlice";
+import { useEffect } from "react";
 
 
 const Books = () => {
 
-    const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const userData = useSelector(getUserLoginData)
+  const userRole = userData.user ? userData.user.role : ''
+  const books = useSelector(getBooks)
 
-     //define table columns
+  useEffect(()=>{
+    dispatch(fetchPublishers())
+  },[])
+
+
+  //define table columns
   const columns = [
     { 
         id: 'id', 
@@ -59,41 +67,32 @@ const Books = () => {
         align: 'left',
         format: (value) => value.toLocaleString('en-US'), 
       },
-    {
-      id: 'edit',
-      label:<a href="">Add</a>,
-      minWidth: 60,
-      align: 'left',
-    }
+
+      Object.keys(userData).length !== 0 && userRole === 'admin' ?
+      { 
+        id: 'edit',
+        label:<a href="">Add</a>,
+        minWidth: 60,
+        align: 'left',
+        
+      }:
+      {
+
+      }
   ];
 
-  const books = {
-      1: {
-        id:1,
-        title:'test1',
-        pages:778,
-        price:78.75
-      },
-      2: {
-          id:2,
-        title:'test2 sdhshd hsduhsd jhdsiuhdsw jshdiushds dsdhsihds sghdshgduishdius jhshdgushds kshdis',
-        pages:234,
-        price:72.75
-      }
-  }
-
-  console.log(Object.keys(books))
   
   function createData(id, title, pages, price, edit) {
-    return { id, title, pages, price, edit};
+      return { id, title, pages, price, edit};
+    
   }
 
   const rows = [];
 
-  const editBook = (id) => {
-      alert('clicked on edit')
-    //navigate(`/book/${id}`) 
-    
+  const edit = (id) => {
+
+    dispatch(editBook(id))
+    dispatch(editBookModal(true))
   }
 
   const deleteBook = (id) => {
@@ -102,28 +101,28 @@ const Books = () => {
   }
 
      if(Object.keys(books).length !== 0){
-        //use dateDiff on returned date values from database 
-         Object.values(books)
-        //Filter data based on user input. Dispatch setGroupingVar action
-        // will set desired filter
-      
-          .map(item=>{
-              const firstRow = <div>{item.id}</div>
+        books.map(item=>{
+              const firstCol = <div>{item.Id}</div>
 
-              const secondRow = <div>{item.title}</div>
+              const secondCol = <div>{item.Title}</div>
 
-              const thirdRow =<span>{item.pages}</span> 
+              const thirdCol =<span>{item.Pages}</span> 
 
-              const fourthRow =<span>{item.price}</span> 
+              const fourthCol =<span>{item.Price}</span> 
     
+        
+                const fifthCol = <span> 
+                  <EditOutlinedIcon fontSize='small' onClick={()=>edit(item.Id)}/>
+                  <DeleteOutlineOutlinedIcon onClick={()=>deleteBook(item._id)} fontSize='small' />
+                 </span>
+              
                   // add third row (remove and edit buttons)
-                  const fifthRow = <span> 
-                    <EditOutlinedIcon fontSize='small' onClick={()=>{editBook(item._id)}}/>
-                    <DeleteOutlineOutlinedIcon onClick={()=>deleteBook(item._id)} fontSize='small' />
-            </span>
-
+                rows.push(createData(firstCol, secondCol, thirdCol, fourthCol, fifthCol)) 
+                 
+             
+           
           // generate rows 
-           rows.push(createData(firstRow, secondRow, thirdRow, fourthRow, fifthRow)) 
+           
           
         })
       }
@@ -171,6 +170,7 @@ const Books = () => {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
+                
                 <TableCell
                   key={Math.random()*100}
                   align={column.align}

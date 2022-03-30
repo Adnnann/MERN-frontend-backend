@@ -2,25 +2,27 @@ import jwt from 'jsonwebtoken'
 import expressJwt from 'express-jwt'
 import User from '../models/user.model'
 import config from '../config/config'
+import errorHandler from '../controllers/helpers/dbErrorHandlers'
 
 const signin = (req, res) => {
-    User.findOne({'email': req.body.email},(err, user) => {
+
+    console.log(req.body.username, req.body.password)
+    User.findOne({'username': req.body.username},(err, user) => {
         if(err || !user){
             return res.send({error: 'User not found'})
         }
         if(!user.authenticate(req.body.password)){
-            return res.send({error: 'Email and password do not match'})
+            return res.send({error: 'Username and password do not match'})
         }
-        const token = jwt.sign({_id: user._id, email:user.email, name:user.name}, config.secret)
+        const token = jwt.sign({_id: user._id, name:user.name, role:user.role}, config.secret)
         res.cookie('userJwtToken', token, {expire: new Date()+999, httpOnly:true})
         res.send({
             token,
             user: {
                 _id:user._id, 
-                firstName: user.firstName, 
-                lastName: user.lastName,
-                nickname: user.nickname, 
-                email: user.email
+                name: user.name, 
+                username: user.username,
+                role: user.role
             }
         })
     })
