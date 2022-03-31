@@ -15,12 +15,12 @@ import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 import { useState } from "react";
 import BookIcon from '../../assets/images/bookIcon.png'
-import HeaderButtons from "./HeaderButtons";
 import { Grid } from "@mui/material";
 import Item from '@mui/material/Grid'
 import { Button, ButtonGroup } from "@mui/material";
 import { getUserLoginData, logout, resetStore } from '../../features/librarySlice';
 import LogoutIcon from '@mui/icons-material/Logout'
+import Buttons from "./Buttons";
 
 const useStyles = makeStyles(theme=>({
     card: {
@@ -131,15 +131,16 @@ const logOut = () => {
                 </Typography>
 
                 <div className={classes.rightButtons}>
-                <ButtonGroup variant="contained" >
-                    <Button onClick={redirectToPublishers}
-                    color='info'>Publishers</Button>
-                    <Button onClick={redirectToBooks}
-                    color='info'>Books</Button>
-                    <Button onClick={redirectToAuthors}
-                    color='info'>Authors</Button>
                 
-                </ButtonGroup> 
+                    <Buttons 
+                    firstButton={redirectToPublishers}
+                    firstButtonText={'Publishers'}
+                    secondButton={redirectToBooks}
+                    secondButtonText={'Books'}
+                    thirdButton={redirectToAuthors}
+                    thirdButtonText={'Authors'} />
+                
+            
    
                 </div> 
 

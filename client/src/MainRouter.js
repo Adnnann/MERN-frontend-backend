@@ -5,11 +5,16 @@ import Footer from './components/core/Footer'
 import Login from './components/Login'
 import Books from './components/Books'
 import EditBook from './components/EditBook'
+import AddBook from './components/AddBook'
+import DisplayAuthorData from './components/DisplayAuthorData'
+
 
 const MainRouter = () => {
     return(
         <Router>
         <EditBook />
+        <AddBook />
+        <DisplayAuthorData />
             <Routes>
                 <Route path='/' element={<Home />}></Route>
                 <Route path='/ourTeam' element={<OurTeam />}></Route>

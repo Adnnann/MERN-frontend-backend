@@ -1,7 +1,5 @@
-import { AppBar, NavBar, Container, Typography, Toolbar } from "@mui/material"
-import BottomNavigation from '@mui/material/BottomNavigation';
+import { AppBar,  Container, Typography, Toolbar } from "@mui/material"
 import { makeStyles } from "@mui/styles";
-// or
 
 const useStyles = makeStyles(theme=>({
     footer:{

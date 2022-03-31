@@ -9,7 +9,7 @@ import publishersRoutes from './routes/publishers.routes'
 import bookImageRoutes from './routes/book.image.routes'
 import passport from 'passport';
 import cookieParser from 'cookie-parser'
-
+import authorsRoutes from './routes/author.routes'
 
 const app = express()
 
@@ -25,6 +25,7 @@ app.use('/', authRoutes)
 app.use('/', userRoutes)
 app.use('/', booksRoutes)
 app.use('/', publishersRoutes)
+app.use('/', authorsRoutes)
 
 app.use('/images', express.static('images'));
 app.use('/', bookImageRoutes);

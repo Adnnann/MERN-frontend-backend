@@ -1,30 +1,26 @@
 import BooksHeader from "./core/BooksHeader"
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import { 
+  addBookModal,
         editBookModal, 
-        getBooks
+        fetchAuthors, 
+        getBooks,
+        getFilterForBooks
 } from '../features/librarySlice';
 import { useSelector, useDispatch } from 'react-redux';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import FilterBooks from "./FilterBooks";
-import SearchIcon from '@mui/icons-material/Search';
-import InputAdornment from '@mui/material/InputAdornment';
-import { TextField } from "@mui/material";
 import { editBook } from "../features/librarySlice";
 import { 
         getUserLoginData,
-        fetchPublishers
+        fetchPublishers,
+        filterBooks
 } from "../features/librarySlice";
 import { useEffect } from "react";
+import TableComponent from "./TableComponent";
+import { Tooltip } from "@mui/material";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
 const Books = () => {
@@ -33,13 +29,17 @@ const Books = () => {
   const userData = useSelector(getUserLoginData)
   const userRole = userData.user ? userData.user.role : ''
   const books = useSelector(getBooks)
+  const filterForBooks = useSelector(getFilterForBooks)
 
   useEffect(()=>{
     dispatch(fetchPublishers())
+    dispatch(fetchAuthors())
+
+
   },[])
 
 
-  //define table columns
+  //define table columns for displaying books
   const columns = [
     { 
         id: 'id', 
@@ -67,11 +67,14 @@ const Books = () => {
         align: 'left',
         format: (value) => value.toLocaleString('en-US'), 
       },
-
+      //if user admin => display add column (for adding, editing and deleting books) 
+      //else don't
       Object.keys(userData).length !== 0 && userRole === 'admin' ?
       { 
         id: 'edit',
-        label:<a href="">Add</a>,
+        label:<Tooltip title='Add book'>
+                  <AddCircleIcon onClick={()=>dispatch(addBookModal(true))} />
+              </Tooltip>,
         minWidth: 60,
         align: 'left',
         
@@ -82,10 +85,37 @@ const Books = () => {
   ];
 
   
-  function createData(id, title, pages, price, edit) {
-      return { id, title, pages, price, edit};
-    
+const createDataBooks = (id, title, pages, price, edit) => {
+  return {id, title, pages, price, edit}
+}
+
+
+const createRowsBooks = () =>{
+
+  if(Object.keys(books).length !== 0){
+
+    books.filter(item=>item.Title.includes(filterForBooks))
+    .map(item=>{
+
+      const firstCol = <div>{item.Id}</div>
+      const secondCol = <div>{item.Title}</div>
+      const thirdCol =<span>{item.Pages}</span> 
+      const fourthCol =<span>{item.Price}</span> 
+      const fifthCol = <span> 
+                            <Tooltip title="Edit book">
+                              <EditOutlinedIcon fontSize='small' onClick={()=>edit(item.Id)}/>
+                            </Tooltip>
+                            
+                            <Tooltip title='Delete book'>
+                              <DeleteOutlineOutlinedIcon onClick={()=>deleteBook(item._id)} fontSize='small' />
+                            </Tooltip>
+                          </span>
+      
+          // add third row (remove and edit buttons)
+        rows.push(createDataBooks(firstCol, secondCol, thirdCol, fourthCol, fifthCol)) 
+    })
   }
+}
 
   const rows = [];
 
@@ -100,37 +130,18 @@ const Books = () => {
     //dispatch(setDeleteId(id))
   }
 
-     if(Object.keys(books).length !== 0){
-        books.map(item=>{
-              const firstCol = <div>{item.Id}</div>
+  const addBook = () => {
+    dispatch(addBookModal(true))
+  }
 
-              const secondCol = <div>{item.Title}</div>
-
-              const thirdCol =<span>{item.Pages}</span> 
-
-              const fourthCol =<span>{item.Price}</span> 
-    
-        
-                const fifthCol = <span> 
-                  <EditOutlinedIcon fontSize='small' onClick={()=>edit(item.Id)}/>
-                  <DeleteOutlineOutlinedIcon onClick={()=>deleteBook(item._id)} fontSize='small' />
-                 </span>
-              
-                  // add third row (remove and edit buttons)
-                rows.push(createData(firstCol, secondCol, thirdCol, fourthCol, fifthCol)) 
-                 
-             
-           
-          // generate rows 
-           
-          
-        })
-      }
-
+  const filter = (e) => {
+    dispatch(filterBooks(e.target.value))
+    console.log(filterForBooks)
+  }
 
 
   return (
-      <>
+    <>
     <BooksHeader />
     <Grid container justifyContent={'center'}>
 
@@ -144,69 +155,23 @@ const Books = () => {
 
     <Grid item xs={12} md={6} lg={6} xl={6}>
 
-    <TextField 
-    onChange={(e)=>console.log(e.target.value)}
-    InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          )
-        }}
-        variant='standard'
-    style={{borderStyle:'solid', borderWidth:'1px', marginTop:'10px',
-    borderColor:'grey', borderRadius:'15px', paddingLeft:'5px'}}/>
+    <FilterBooks 
+      filter={filter}
+    />
 
     </Grid>
 
     <Grid item xs={12} md={9} lg={9} xl={9} style={{marginTop:'10px'}}>
-
-    <Paper sx={{ width: '100%', overflow: 'hidden', overflowX:"none" }}>
-    { Object.keys(books).length == 0  ?
-    'Start adding books'
-    : Object.keys(books).length !== 0 ?
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                
-                <TableCell
-                  key={Math.random()*100}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth, backgroundColor:'grey' }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .map((row, index) => {
-                return (
-                  <TableRow style={{padding: '0 !important', height:'90px', wordBreak:"break"}} key={index}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={Math.random() * 10} align={column.align} style={{wordBreak:'break-all'}}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    : ''} 
-    </Paper> 
-</Grid>
+        <TableComponent
+          createData={createDataBooks}
+          createRows={createRowsBooks}
+          rows={rows}
+          columns={columns}
+        />
     </Grid>
-    </>
+     
+  </Grid>
+  </>
   );  
 }
 

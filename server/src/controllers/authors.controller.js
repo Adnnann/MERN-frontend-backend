@@ -1,49 +1,47 @@
-import Book from '../models/books.model'
+import Author from '../models/Authors.model'
 import _ from 'lodash'
 import dbErrorHandlers from '../controllers/helpers/dbErrorHandlers'
 import jwtDecode from 'jwt-decode'
 
-const createBook = (req, res) => {
+const createAuthor = (req, res) => {
 
     console.log(req.body)
     //console.log(req)
-    const book = new Book(req.body) 
-    console.log(book)
-    book.save((err)=>{
+    const author = new Author(req.body) 
+    console.log(Author)
+    author.save((err)=>{
         if(err){
             return res.send({error: dbErrorHandlers.getErrorMessage(err)})
         }
-        return res.send({message: 'Book successfuly created'})
+        return res.send({message: 'Author successfuly created'})
     })
 }
-const getBooks = (req, res) => {
+const getAuthors = (req, res) => {
     // get id to enable filtering of data
     const userId = jwtDecode(req.cookies.userJwtToken)._id
-    //filter data - get Books for last three days
-    Book.find({})
+    //filter data - get Authors for last three days
+    Author.find({})
     .where('userId').equals(userId)
     //sort data in descinding order
     .sort({"created":-1})
-    .exec((err, Books) => {
+    .exec((err, Authors) => {
         if(err){
             return res.send({error:dbErrorHandlers.getErrorMessage(err)})
         }
-        res.send(Books)
+        res.send(Authors)
     })
 }
 
-const getBook =  (req, res) => {
+const getAuthor =  (req, res) => {
     res.status(200).json(req.profile)
 }
-const updateBook = (req, res, next) => {
+const updateAuthor = (req, res, next) => {
 
+    let Author = req.profile
+    Author = _.extend(Author, req.body);
 
-console.log(req.profile)
-    let Book = req.profile
-    Book = _.extend(Book, req.body);
-console.log(req.body)
-    Book.updated = Date.now()
-    Book.save(err=>{
+    Author.updated = Date.now()
+    Author.save(err=>{
         if(err){
             return res.send({error: dbErrorHandlers.getErrorMessage(err)})
         }
@@ -51,32 +49,32 @@ console.log(req.body)
     })
 }
 
-const removeBook = (req, res, next) => {
-    let Book = req.profile
-    Book.remove((err)=>{
+const removeAuthor = (req, res, next) => {
+    let Author = req.profile
+    Author.remove((err)=>{
         if(err){
             return res.send({error: errorHandler.getErrorMessage(err)})
         }
-        res.send({message:'Book deleted'})
+        res.send({message:'Author deleted'})
     })
 }
   
 
-const BookByID = (req, res, next, id) => {
-    Book.findById(id).exec((err, Book) => {
-        if(err || !Book){
+const authorByID = (req, res, next, id) => {
+    Author.findById(id).exec((err, Author) => {
+        if(err || !Author){
             return res.send({error: errorHandler.getErrorMessage(err)})
         }
-    req.profile = Book;
+    req.profile = Author;
     next()
     })
 }
 
 export default {
-    createBook,
-    getBooks,
-    updateBook,
-    removeBook,
-    getBook, 
-    BookByID
+    createAuthor,
+    getAuthors,
+    updateAuthor,
+    removeAuthor,
+    getAuthor, 
+    authorByID
 }
