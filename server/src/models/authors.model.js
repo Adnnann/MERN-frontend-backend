@@ -16,7 +16,7 @@ const AuthorsSchema = new moongose.Schema({
         required:'Biography is required'
     },
     Birthday:{
-        type:Date,
+        type:String,
         required:'Birthday is required'
     },
     Email:{
@@ -31,7 +31,7 @@ AuthorsSchema.path("Name").validate(async function (Name) {
     
     if (author) {    
         
-        if (this.id === book.id) {    
+        if (this.id === author.id) {    
             return true;    
         }    
      

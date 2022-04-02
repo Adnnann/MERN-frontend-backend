@@ -5,10 +5,7 @@ import jwtDecode from 'jwt-decode'
 
 const createAuthor = (req, res) => {
 
-    console.log(req.body)
-    //console.log(req)
     const author = new Author(req.body) 
-    console.log(Author)
     author.save((err)=>{
         if(err){
             return res.send({error: dbErrorHandlers.getErrorMessage(err)})
@@ -37,12 +34,15 @@ const getAuthor =  (req, res) => {
 }
 const updateAuthor = (req, res, next) => {
 
+    console.log(req)
     let Author = req.profile
+    console.log(Author)
     Author = _.extend(Author, req.body);
 
     Author.updated = Date.now()
     Author.save(err=>{
         if(err){
+            console.log(err)
             return res.send({error: dbErrorHandlers.getErrorMessage(err)})
         }
         res.send({message: 'Data updated'})
@@ -61,10 +61,13 @@ const removeAuthor = (req, res, next) => {
   
 
 const authorByID = (req, res, next, id) => {
+
     Author.findById(id).exec((err, Author) => {
+        console.log(Author)
         if(err || !Author){
             return res.send({error: errorHandler.getErrorMessage(err)})
         }
+
     req.profile = Author;
     next()
     })

@@ -4,11 +4,8 @@ import dbErrorHandlers from '../controllers/helpers/dbErrorHandlers'
 import jwtDecode from 'jwt-decode'
 
 const createBook = (req, res) => {
-
-    console.log(req.body)
-    //console.log(req)
+    
     const book = new Book(req.body) 
-    console.log(book)
     book.save((err)=>{
         if(err){
             return res.send({error: dbErrorHandlers.getErrorMessage(err)})
@@ -37,11 +34,9 @@ const getBook =  (req, res) => {
 }
 const updateBook = (req, res, next) => {
 
-
-console.log(req.profile)
     let Book = req.profile
     Book = _.extend(Book, req.body);
-console.log(req.body)
+
     Book.updated = Date.now()
     Book.save(err=>{
         if(err){
@@ -52,6 +47,7 @@ console.log(req.body)
 }
 
 const removeBook = (req, res, next) => {
+    
     let Book = req.profile
     Book.remove((err)=>{
         if(err){

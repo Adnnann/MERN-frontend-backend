@@ -21,5 +21,23 @@ const PublishersSchema = new moongose.Schema({
     }, 
 })
 
+PublishersSchema.path("name").validate(async function (name) {
+    
+    const publisher = await this.constructor.findOne({ name });    
+    
+    if (publisher) {    
+        
+        if (this.id === publisher.id) {    
+            return true;    
+        }    
+     
+        return false;    
+    
+    }   
+
+    return true;   
+
+}, `Publisher already exists!`);
+
 
 export default moongose.model('Publishers', PublishersSchema)
