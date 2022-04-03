@@ -1,4 +1,12 @@
 import moongose from 'mongoose'
+import validate from 'mongoose-validator'
+
+const emailValidator = [
+    validate({
+        validator: 'isEmail',
+        message: 'Please enter valid email address '
+    })
+]
 
 const AuthorsSchema = new moongose.Schema({
     Id:{
@@ -21,7 +29,8 @@ const AuthorsSchema = new moongose.Schema({
     },
     Email:{
         type:String,
-        required:'Email is required'
+        required:'Email is required',
+        validate: emailValidator
     }, 
 })
 

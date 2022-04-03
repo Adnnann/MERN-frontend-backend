@@ -11,25 +11,22 @@ import { DialogContent } from '@mui/material';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import {useNavigate }from 'react-router-dom'
-import { Icon } from '@mui/material';
 import { 
-        getAddBookModal,
-        getAddBookDataStatus,
-        getPublishers,
         uploadBookImage, 
         getUploadImageStatus,
-        getBooks,
-        fetchBooks,
-        clearAddBookStatus,
-        addBookModal,
-        addBookData,
-        getDisableAuthorNameField,
-        getAuthorToEdit,
-        setDisableAuthorNameField,
+        getAddAuthorModal,
+        getAddAuthorDataStatus,
+        getAuthors,
+        clearAddAuthorStatus,
+        addAuthorModal,
+        addAuthorData,
+        fetchAuthors,
         clearUploadImageStatus,
-        getAuthors
 } from '../features/librarySlice';
-import SelectField from './SelectField';
+import dateFormat from 'dateformat';
+import DateInput from './DatePicker';
+import Lightpick from 'lightpick'
+
 
 const useStyle = makeStyles((theme)=>({
     dialogWindow:{
@@ -100,69 +97,68 @@ const useStyle = makeStyles((theme)=>({
         display:'inline-flex', 
         paddingTop:'10px'
     }
-   
+
 }))
 
-const AddBook = () => {
+
+const AddAuthor = () => {
 
 const dispatch = useDispatch()
 
-const showAddBookModal = useSelector(getAddBookModal)
-const publishers = useSelector(getPublishers)
+const showAddAuthorModal = useSelector(getAddAuthorModal)
 const uploadImageStatus = useSelector(getUploadImageStatus)
-const bookAddStatus = useSelector(getAddBookDataStatus)
-const books = useSelector(getBooks)
-const disableAuthorNameField = useSelector(getDisableAuthorNameField)
-const authorToEdit = useSelector(getAuthorToEdit)
+const authorAddStatus = useSelector(getAddAuthorDataStatus)
 const authors = useSelector(getAuthors)
-
 const navigate = useNavigate()
 
 const classes = useStyle()
 
+
 const [values, setValues] = useState({
-    
-    title:'',
-    description:'',
-    pages:'',
-    publisher:'',
-    price:'',
-    author:'',
-    image:'',
-    imageFile:''
-    
+    id: '',
+    name: '',
+    biography: '',
+    dateOfBirth: '',
+    email: '',
+    image: ''
 })
+
 
 //store all values from selecte book in useEffect to prevent delays. Use book.Title or any other item in
 //book object in useEffect dependency array
 useEffect(()=>{
 
-    //book updated successfuly do redirect user to viewBugs
-    if(bookAddStatus.hasOwnProperty('message')){
-        dispatch(fetchBooks())
-        dispatch(addBookModal(false))
-        dispatch(clearAddBookStatus())
-        dispatch(setDisableAuthorNameField(false))
-        dispatch(clearUploadImageStatus())
         setValues({
-            title:'',
-            description:'',
-            pages:'',
-            publisher:'',
-            price:'',
-            author: '',
-            image:'',
-            imageFile:''
+            id: Object.values(authors).length,
+            name:'',
+            biography:'',
+            dateOfBirth:'',
+            email:'',
+            image: ''
         })
-        disableAuthorNameField ? dispatch(addBookModal(false))
-        : navigate('/books')
+    
+    if(authorAddStatus.hasOwnProperty('message')){
+        dispatch(clearAddAuthorStatus())
+        dispatch(addAuthorModal(false))
+        dispatch(clearUploadImageStatus())
+        dispatch(fetchAuthors())
     }
 
- },[bookAddStatus])
+ },[authorAddStatus.message])
+
+
+ 
 
 const handleChange = name => event => {
-    setValues({...values, [name]:event.target.value})   
+
+    if(name === 'dateOfBirth'){
     
+        setValues({...values, [name]:event}) 
+        return
+        
+    }
+
+   setValues({...values, [name]:event.target.value})       
 }
 
 const handleUpload = event => {
@@ -179,21 +175,18 @@ const handleUpload = event => {
 }
 
 const clickHandler = () => {
+    const author = {
+            Id: Math.max(...Object.values(authors).map(item=>Number(item.Id)))+1,
+            Name: values.name,
+            Biography: values.biography,
+            Birthday: values.dateOfBirth,
+            Email: values.email, 
+            Image:uploadImageStatus.hasOwnProperty('imageUrl') ? 
+            uploadImageStatus.imageUrl
+            : 'noimgUser'     
+        }
 
-    const book = {
-        Id: Math.max(...Object.values(books).map(item=>Number(item.Id)))+1,
-        Title:values.title,
-        Description:values.description,
-        Pages:values.pages,
-        Publisher:values.publisher,
-        Price:values.price,
-        Author:disableAuthorNameField ? authorToEdit[0].Name : values.author,
-        Image: uploadImageStatus.hasOwnProperty('imageUrl') ? 
-        uploadImageStatus.imageUrl
-        : 'noimg'
-    }
-    
-   dispatch(addBookData(book))
+    dispatch(addAuthorData(author))
 }
 
 const uploadPhoto = () => {
@@ -202,57 +195,39 @@ const uploadPhoto = () => {
 
 const cancel = () => {
     setValues({
-        title:'',
-        description:'',
-        pages:'',
-        publisher:'',
-        price:'',
-        author: '',
-        image:'',
-        imageFile:''
+        id: '',
+        name:'',
+        biography:'',
+        dateOfBirth:'',
+        email:'',
+        image: ''
     })
-    dispatch(setDisableAuthorNameField(false))
-    dispatch(addBookModal(false))
+    dispatch(addAuthorModal(false))
 }
-
 
 return (
 
 <Dialog
 fullScreen
-open={showAddBookModal}
-//onClose={()=>dispatch(setEditBug(false))}
+open={showAddAuthorModal}
 aria-labelledby="modal-modal-title"
 aria-describedby="modal-modal-description">
 
-<DialogContent tabIndex={-1}>
-         
-<Typography variant='h3'>
-    Book
-</Typography>
+    <DialogContent tabIndex={-1}>
+            
+    <Typography variant='h3'>
+        Author
+    </Typography>
 
-<input 
-onChange={(event)=>handleUpload(event)}
-type='file' 
-id='upload' 
-style={{visibility:"hidden"}}></input>
+    <input 
+    onChange={(event)=>handleUpload(event)}
+    type='file' 
+    id='upload' 
+    style={{visibility:"hidden"}}></input>
 
+    <Grid container justifyContent={'center'}>
 
-
-{//display error returned from server
-    Object.keys(bookAddStatus).length !== 0 && bookAddStatus.hasOwnProperty('error') ? (
-        <Grid item xs={12} md={12} lg={12} xl={12} style={{textAlign:'center'}}>
-        <Typography component='p' color='error'>
-            <Icon color='error' className={classes.error}></Icon>
-            {bookAddStatus.error}
-        </Typography>
-        </Grid>
-    ) : null
-} 
-    
-<Grid container justifyContent={'center'}>
-
-    <Grid item xs={12} md={8} lg={8} xl={8}>
+      <Grid item xs={12} md={8} lg={8} xl={8}>
 
         <Grid container style={{
             marginBottom:'4%', paddingBottom:'10px'}}>
@@ -273,7 +248,7 @@ style={{visibility:"hidden"}}></input>
                     <Input 
                         disabled
                         className={classes.inputField}
-                        value={Math.max(...Object.values(books).map(item=>Number(item.Id)))+1}/>
+                        onChange={handleChange('id')} value={Math.max(...Object.values(authors).map(item=>Number(item.Id)))+1}/>
                 </Item>
             </Grid>
 
@@ -285,7 +260,7 @@ style={{visibility:"hidden"}}></input>
                         <Typography 
                         variant='h5' 
                         className={classes.inputTitle}>
-                            Title:
+                            Name:
                         </Typography>
                     </Item>
                 </Grid>
@@ -295,41 +270,13 @@ style={{visibility:"hidden"}}></input>
           
                         <Item >
                             <Input 
-                            fullWidth
-                            className={classes.inputField}
-                            onChange={handleChange('title')} value={values.title}/>
+                                fullWidth
+                                className={classes.inputField}
+                                onChange={handleChange('name')} 
+                                value={values.name}/>
                         </Item>
     
                     </Grid>
-
-            </Grid>
-
-            <Grid item xs={12} md={3} lg={3} xl={3}>
-                    <Item className={classes.label}>
-                        <Typography 
-                        variant='h5' 
-                        className={classes.inputTitle}>
-                            Author:
-                        </Typography>
-                    </Item>
-                </Grid>
-
-    
-                <Grid item xs={12} md={8} lg={8} xl={8} display={'block'}>
-          
-                        <Item style={{maxWidth:'220px', marginBottom:'10px'}}>
-                           
-                                <SelectField
-                                    handleChange={handleChange('author')} 
-                                    selectedValues={disableAuthorNameField ? authorToEdit[0].Name : values.author}
-                                    object={authors} 
-                                    objectIndex={'Name'}
-                                    disabled = {disableAuthorNameField }
-                                    />
-                               
-                        </Item>
-    
-                    
 
             </Grid>
    
@@ -338,22 +285,21 @@ style={{visibility:"hidden"}}></input>
                         <Typography 
                         variant='h5' 
                         className={classes.inputTitle}>
-                        Description:
+                        Biography:
                         </Typography>
                     </Item>
                 </Grid>
         
                 <Grid item xs={12} md={9} lg={9} xl={9}>
             
-                    <Item className={classes.inputField} style={{minWidth:"100%"}}>
+                <Item className={classes.inputField} style={{minWidth:"80%"}}>
                         <TextField
                         multiline
                         fullWidth
                         minRows={4}
                         className={classes.inputField}
-                        style={{paddingTop:'0'}}
-                        onChange={handleChange('description')} 
-                        value={values.description}/>
+                        onChange={handleChange('biography')} 
+                        value={values.biography}/>
                     </Item>
                     
                 </Grid>
@@ -363,74 +309,50 @@ style={{visibility:"hidden"}}></input>
                         <Typography 
                         variant='h5' 
                         className={classes.inputTitle}>
-                        Pages:
+                        DoB:
                         </Typography>
                     </Item>
                 </Grid>
         
-                <Grid item xs={6} md={3} lg={3} xl={3}>
-            
-                    <Item>
-                        <Input 
-                            fullWidth
-                            className={classes.inputField}
-                            onChange={handleChange('pages')} value={values.pages}/>
-                    </Item>
-                    
-                </Grid>
 
-                <Grid item xs={12} md={3} lg={3} xl={3}>
-                    <Item className={classes.label}>
-                        <Typography 
-                        variant='h5' 
-                        className={classes.inputTitle}>
-                        Price:
-                        </Typography>
-                    </Item>
-                </Grid>
-        
-                <Grid item xs={6} md={3} lg={3} xl={3}>
-            
+                <Grid item xs={12} md={9} lg={9} xl={9}>
                     <Item>
-                        <Input 
-                            fullWidth
-                            className={classes.inputField}
-                            onChange={handleChange('price')} value={values.price}/>
-                    </Item>
-                    
-                </Grid>
-
-                <Grid item xs={12} md={3} lg={3} xl={3}>
-                    <Item className={classes.label}>
-                        <Typography 
-                        variant='h5' 
-                        className={classes.inputTitle}>
-                        Publishers:
-                        </Typography>
-                    </Item>
-                </Grid>
-
-                <Grid item xs={6} md={3} lg={3} xl={3}>
-            
-                    <Item>
-                        
-                        <SelectField
-                            handleChange={handleChange('publisher')} 
-                            selectedValues={Object.keys(publishers).length !== 0 ?
-                            values.publisher ?
-                            values.publisher : ''
-                            : ''
-                            }
-                            object={publishers} 
-                            objectIndex={'name'}
+                        <DateInput 
+                        selectedDate={values.dateOfBirth}
+                        height={'40px'}
+                        changeHandler={handleChange('dateOfBirth')}
+                        value={values.dateOfBirth !== '' ? 
+                        dateFormat(values.dateOfBirth, 'mm/dd/yyyy')
+                        : ''}
                         />
-                
                     </Item>
-               
+                    
                 </Grid>
 
-                <Grid item xs={12} md={10} lg={12} xl={12} className={classes.buttons}>
-                    <Grid container justifyContent={
+                <Grid item xs={12} md={3} lg={3} xl={3}>
+                    <Item className={classes.label}>
+                        <Typography 
+                        variant='h5' 
+                        className={classes.inputTitle}>
+                        Email:
+                        </Typography>
+                    </Item>
+                </Grid>
+        
+                <Grid item xs={6} md={6} lg={6} xl={6}>
+            
+                    <Item>
+                        <Input 
+                            fullWidth
+                            className={classes.inputField}
+                            onChange={handleChange('email')} value={values.email}/>
+                    </Item>
+                    
+                </Grid>
+
+
+                <Grid item xs={12} md={12} lg={12} xl={12} className={classes.buttons}>
+                    <Grid container marginTop='10px' justifyContent={
                         'flex-end'
                         }>
                         <Item className={classes.label}>
@@ -442,30 +364,58 @@ style={{visibility:"hidden"}}></input>
                                 height:'40px', 
                                 marginRight:'20px'}}>Save</Button>
                             <Button 
-                                onClick={()=>cancel()}
-                                style={{minWidth:'100px', height:'40px'}}
-                                variant='contained'>Cancel</Button>
+                            onClick={()=>cancel()}
+                            style={{minWidth:'100px', height:'40px'}}
+                            variant='contained'>Cancel</Button>
                            
                         </Item>
+
+                       
                     </Grid>
-
+                    
+                            
                 </Grid>
+                {authorAddStatus.hasOwnProperty('error') ?
+                <Grid container marginTop='10px' justifyContent={
+                        'center'
+                        }>
+                        <Item className={classes.label}>
+                       
+                            <Typography 
+                                variant='h6' 
+                                style={{
+                                display:'inline-flex', 
+                                paddingTop:'10px',
+                                textAlign:'center',
+                                color:'red',
+                                marginBottom:'1opx'
+                                }}>
+                                {authorAddStatus.error}
+                            </Typography> 
+                        </Item>
 
+                       
+                    </Grid>
+                   
+                    : null}    
             </Grid>  
+                      
+            
         
         </Grid>
 
 {/* Right side grid */}
+
         <Grid item xs={12} md={3} lg={3} xl={3}>
 
             <Grid item xs={12} md={12} lg={12} xl={12}>
             <Grid container justifyContent={'center'}>
                 <Item className={classes.image}>
                     <CardMedia 
-                    component={'img'}
-                    style={{width:'220px', marginBottom:'10px'}}
-                    src={uploadImageStatus.hasOwnProperty('imageUrl') 
-                    ? uploadImageStatus.imageUrl : ''}>
+                        component={'img'}
+                        style={{width:'220px', marginBottom:'10px'}}
+                        src={uploadImageStatus.hasOwnProperty('imageUrl') 
+                        ? uploadImageStatus.imageUrl : ''}>
 
                     </CardMedia> 
                     
@@ -481,28 +431,30 @@ style={{visibility:"hidden"}}></input>
                             Upload photo
                         </Button>
                     </Item>
-
                     {uploadImageStatus.hasOwnProperty('Error') ?
                
-                        <Typography 
-                            variant='h6' 
-                            style={{
-                            display:'inline-flex', 
-                            paddingTop:'10px',
-                            textAlign:'center',
-                            color:'red',
-                            marginBottom:'1opx'
-                            }}>
-                            {uploadImageStatus.Error}
-                        </Typography> 
-          
-                    : null}
+                            <Typography 
+                                variant='h6' 
+                                style={{
+                                display:'inline-flex', 
+                                paddingTop:'10px',
+                                textAlign:'center',
+                                color:'red',
+                                marginBottom:'1opx'
+                                }}>
+                                {uploadImageStatus.Error}
+                            </Typography> 
+                       
+                   
+                    : null} 
 
                 </Grid>
+                
+        </Grid>
 
-            </Grid>
+    </Grid>
 
-            <Grid item xs={12} md={12} lg={12} xl={12} className={classes.mobileWinButtons}>
+       <Grid item xs={12} md={12} lg={12} xl={12} className={classes.mobileWinButtons}>
                     <Grid container justifyContent={
                         'flex-end'
                         }>
@@ -522,13 +474,13 @@ style={{visibility:"hidden"}}></input>
                         </Item>
                     </Grid>
                     
-                </Grid>
+                
 
         </Grid>
     
-    </Grid>
+ </Grid>
 
-  </DialogContent>
+ </DialogContent>
 
 </Dialog>
   
@@ -537,4 +489,4 @@ style={{visibility:"hidden"}}></input>
 
 }
 
-export default AddBook
+export default AddAuthor

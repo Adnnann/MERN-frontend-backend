@@ -1,39 +1,47 @@
 import { Dialog, Box, CardMedia, DialogContent, Typography, ButtonGroup, Button, Container, Grid } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { displayAuthorDataModal, getAuthorData, getAuthorDataModalStatus } from "../features/librarySlice";
+import { 
+         getBookData, 
+         getBookDataModal,
+        displayBookDataModal 
+} from "../features/librarySlice";
 
-const DisplayAuthorData = () => {
+const DisplayBookData = () => {
     
-const authorDataModalStatus = useSelector(getAuthorDataModalStatus)
-const authorData = useSelector(getAuthorData)
+const bookDataModalStatus = useSelector(getBookDataModal)
+const bookData = useSelector(getBookData)
 const dispatch = useDispatch()
 
 return(
 <Dialog
-    open={authorDataModalStatus}
+    open={bookDataModalStatus}
 >
 
 <DialogContent
 tabIndex={-1}>
 
 {
-    Object.keys(authorData).length !== 0 ?
+    Object.keys(bookData).length !== 0 ?
 
             <><Box flexDirection={'column'}>
 
                 <CardMedia 
                 component={'img'}
                 style={{maxWidth:'280px', marginLeft:'10px', marginTop:'10px'}}
-                src={`/images/${authorData[0].Image}.jpg`}></CardMedia>
+                src={`/images/${bookData[0].Image}.jpg`}></CardMedia>
 
                 <DialogContent>
+
+                <Typography variant="h6" marginTop={'20px'} marginBottom='10px' fontStyle={'italic'}>
+                        {bookData[0].Author}
+                    </Typography>
                 
                     <Typography variant="h4">
-                        {authorData[0].Name}
+                        {bookData[0].Title}
                     </Typography>
 
                     <Typography variant="h6" marginTop={'20px'}>
-                        {authorData[0].Biography}
+                        {bookData[0].Description}
                     </Typography>
 
                 </DialogContent>
@@ -43,7 +51,7 @@ tabIndex={-1}>
             <Grid container justifyContent={'center'}>
                 <Button variant="contained"  
                 style={{minWidth:"120px", minHeight:'60px', marginBottom:'10px'}}
-                onClick={()=>dispatch(displayAuthorDataModal(false))}>Back</Button>
+                onClick={()=>dispatch(displayBookDataModal(false))}>Back</Button>
             </Grid>
                   
         </>
@@ -54,4 +62,4 @@ tabIndex={-1}>
     )
 }
 
-export default DisplayAuthorData
+export default DisplayBookData

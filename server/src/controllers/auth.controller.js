@@ -2,11 +2,8 @@ import jwt from 'jsonwebtoken'
 import expressJwt from 'express-jwt'
 import User from '../models/user.model'
 import config from '../config/config'
-import errorHandler from '../controllers/helpers/dbErrorHandlers'
-
+import jwtDecode from 'jwt-decode'
 const signin = (req, res) => {
-
-    console.log(req.body.username, req.body.password)
     User.findOne({'username': req.body.username},(err, user) => {
         if(err || !user){
             return res.send({error: 'User not found'})
@@ -40,8 +37,11 @@ const requireSignin = expressJwt({
 })
 
 const hasAuthorization = (req, res, next) => {
-    const authorized = req.profile && req.auth && req.profile._id == req.auth._id
-    if(!authorized) return res.status(403).json('User is not authorized!')
+    if(!req.cookies.userJwtToken){
+        return res.send({error:'User not signed'})
+    }else if(jwtDecode(req.cookies.userJwtToken).role !== 'admin'){
+        return res.send({error:'User not authorized'})
+    }
     next()
 }
 

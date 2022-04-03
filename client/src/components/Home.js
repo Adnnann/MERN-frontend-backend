@@ -1,61 +1,10 @@
 import Grid from '@mui/material/Grid'
 import { Box } from '@mui/system'
-import HomePageIcon from '../assets/images/homePageIcon.png'
 import Item from '@mui/material/Grid'
 import { Typography } from '@mui/material'
-import { makeStyles } from '@mui/styles'
 import Header from './core/Header'
-import { AppBar, NavBar, Container, Toolbar } from "@mui/material"
-
-const useStyles = makeStyles(theme=>({
-    card: {
-        maxWidth:600,
-        margin:'auto',
-        marginTop:theme.spacing(5),
-        marginBottom: theme.spacing(5),
-        display:'inline'
-    },
-    title:{
-        padding: `${theme.spacing(5)}px ${theme.spacing(2.5)}px
-        ${theme.spacing(2)}px`,
-        color: theme.palette.openTitle
-    },
-    dashboardTitle:{
-        padding: `${theme.spacing(1)}px ${theme.spacing(2.5)}px
-        ${theme.spacing(2)}px`,
-        color: theme.palette.openTitle
-    },
-    media:{
-        minHeight:400
-    },
-    credit:{
-        padding:10,
-        textAlign:'right',
-        backgroundColor:'#ededed',
-        borderBottom:'1px solid #d0d0d0',
-        '& a': {
-            color:'#3f4771'
-        }
-    },
-    logo: {
-        maxWidth: 80,
-      },
-    rightButtons: {
-        backgroundColor: 'white',
-        marginRight: '2px',
-        marginTop:'50px',
-        textTransform:'none',
-        marginLeft:'auto'
-    },
-    welcomeMessage:{
-        paddingLeft:"20px"
-    }
-    
-}))
 
 const Home = () => {
-
-    const classes = useStyles()
 
     return(
         <>
@@ -68,7 +17,7 @@ const Home = () => {
                     component="img"
                     sx={{height:  140, marginTop:'5%', marginRight:'0', display:'inline-flex', justifyContent:'right'}}
                     alt="Book"
-                    src={HomePageIcon}
+                    src={'images/LibLogo.png'}
                     />
                 </Item>
             </Grid>

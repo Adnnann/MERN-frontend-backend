@@ -1,23 +1,18 @@
 import React, {useState} from "react"
-import { Icon, Typography, TextField, Button, Card, CardContent, CardActions, InputLabel } from "@mui/material"
+import { Icon, Typography,  Button } from "@mui/material"
 import { makeStyles } from "@mui/styles"
-import { fetchBooks, getBooks, getUserLoginData, login, 
-//             getuserLoginData, 
-//             userToken, 
-//             getUserToken, 
-//             fetchUserTransactions,
-//             userDataToDisplay
+import { 
+        fetchBooks, 
+        getUserLoginData, 
+        login, 
 } from "../features/librarySlice"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { useEffect } from "react"
 import {Grid} from '@mui/material'
-import { Box } from "@mui/material"
 import Header from "./core/Header"
 
-
 const useStyles = makeStyles(theme=>({
-    
     error: {
         verticalAlign: 'middle'
     },
@@ -87,7 +82,6 @@ const useStyles = makeStyles(theme=>({
 
 
 return(
-
 <>
 <Header />
 <Grid container justifyContent={'center'} paddingTop={4}>
@@ -117,37 +111,27 @@ return(
                 
         </Grid>
 
-                    {/* { //display error returned from server
-                        Object.keys(userLoginData).length !== 0 && (
-                            <Typography component='p' color='error'>
-                                <Icon color='error' className={classes.error}></Icon>
-                                {userLoginData.error}
-                            </Typography>
-                        )
-                    } */}
-    
-                    <Grid item xs={12} md={12} lg={12} xl={12} style={{marginTop:'10px', marginBottom:'10px'}}>
+        <Grid item xs={12} md={12} lg={12} xl={12} style={{marginTop:'10px', marginBottom:'10px'}}>
 
-                        <Button color='primary' variant="contained" onClick={clickSubmit} 
-                        className={classes.loginButton}>
-                            Login
-                        </Button>
-    
-                    </Grid>
+            <Button color='primary' variant="contained" onClick={clickSubmit} 
+            className={classes.loginButton}>
+                Login
+            </Button>
 
-                    
-                    <Grid item xs={12} md={12} lg={12} xl={12}>
+        </Grid>
+      
+        <Grid item xs={12} md={12} lg={12} xl={12}>
 
-                    {//display error returned from server
-                        Object.keys(userLoginData).length !== 0 && (
-                            <Typography component='p' color='error'>
-                                <Icon color='error' className={classes.error}></Icon>
-                                {userLoginData.error}
-                            </Typography>
-                        )
-                    } 
-    
-                    </Grid>
+        {//display error returned from server
+            Object.keys(userLoginData).length !== 0 && (
+                <Typography component='p' color='error'>
+                    <Icon color='error' className={classes.error}></Icon>
+                    {userLoginData.error}
+                </Typography>
+            )
+        } 
+
+        </Grid>
                     
     
                     

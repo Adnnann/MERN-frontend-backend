@@ -12,25 +12,30 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import {useNavigate }from 'react-router-dom'
 import { 
-        getBookToEdit, 
-        getEditBookModal, 
-        getPublishers, 
-        editBookModal, 
+        getEditAuthorModal,  
         uploadBookImage, 
         getUploadImageStatus,
-        updateBookData,
-        getUpdateBookDataStatus,
+        updateAuthorData,
+        getUpdateAuthorDataStatus,
         getBooks,
-        fetchBooks,
-        clearUpdateStatus,
-        getAuthors,
-        setAuthorData,
+        editAuthorModal,
+        clearAuthorUpdateStatus,
+        setBookData,
         displayAuthorDataModal,
+        addBookModal,
+        fetchAuthors,
+        setDisableAuthorNameField,
+        getAuthorToEdit,
+        getAuthorBooks,
+        displayBookDataModal,
         clearUploadImageStatus
 } from '../features/librarySlice';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import TableComponent from './TableComponent';
-import SelectField from './SelectField';
+import dateFormat from 'dateformat';
+import DateInput from './DatePicker';
+
+
 
 const useStyle = makeStyles((theme)=>({
     dialogWindow:{
@@ -104,218 +109,174 @@ const useStyle = makeStyles((theme)=>({
 
 }))
 
-const EditBook = () => {
+const EditAuthor = () => {
+
+const dispatch = useDispatch()
+
+const showAuthorModal = useSelector(getEditAuthorModal)
+const authorToEdit = useSelector(getAuthorToEdit)
+const books = useSelector(getBooks)
+const uploadImageStatus = useSelector(getUploadImageStatus)
+const authorUpdateStatus = useSelector(getUpdateAuthorDataStatus)
+const authorBooks = useSelector(getAuthorBooks)
+
+const navigate = useNavigate()
 
 const classes = useStyle()
-const dispatch = useDispatch()
-const navigate = useNavigate()
-const [menuValue, setMenuValue] = useState()
-
-const showEditBookModal = useSelector(getEditBookModal)
-const bookToEdit = useSelector(getBookToEdit)
-const publishers = useSelector(getPublishers)
-const uploadImageStatus = useSelector(getUploadImageStatus)
-const bookUpdateStatus = useSelector(getUpdateBookDataStatus)
-const books = useSelector(getBooks)
-const authors = useSelector(getAuthors)
 
 const columns = [
     { 
-        id: 'authors', 
-        label: 'Authors', 
+        id: 'titles', 
+        label: 'Titles', 
         minWidth: 10,
         align:'center'
     },
     
     { 
     id: 'view',
-    label:<a onClick={()=>setNewAuthor(true)}>+</a>,
+    label:<a onClick={()=>newBook()}>+</a>,
     minWidth: 10,
     align: 'center',
     
     }
   ];
 
-  
-  function createDataAuthors(authors, view) {
-      return { authors, view};
+const newBook = () => {
+    dispatch(setDisableAuthorNameField(true))
+    dispatch(editAuthorModal(false))
+    dispatch(addBookModal(true))
     
-  }
+}
 
-  const rows = [];
   
+function createDataAuthors(titles, view) {
+    return { titles, view};
 
-    const [values, setValues] = useState({
-        
-        id: '',
-        title:'',
-        description:'',
-        pages:'',
-        publisher:'',
-        price:'',
-        authors:'',
-        image:'',
-        imageFile:'',
-        addedAuthor:'',
-        error:''
+}
 
-        
-    })
+const rows = [];
 
-const [addNewAuthor, setNewAuthor] = useState(false)
+
+const [values, setValues] = useState({
+    id: '',
+    name: '',
+    biography: '',
+    dateOfBirth: '',
+    email: '',
+    image: ''
+})
+
+
 //store all values from selecte book in useEffect to prevent delays. Use book.Title or any other item in
 //book object in useEffect dependency array
 useEffect(()=>{
-if(Object.keys(bookToEdit).length !== 0){
-    bookToEdit.map(item=>{
+if(Object.keys(authorToEdit).length !== 0){
+    authorToEdit.map(item=>{
         setValues({
             id: item.Id,
-            title:item.Title,
-            description:item.Description,
-            pages:item.Pages,
-            publisher: item.Publisher,
-            price:Number(item.Price).toFixed(2),
-            authors:item.Author,
-            image:item.Image,
-            imageFile:'',
-            addedAuthor:'',
-            error:''
+            name:item.Name,
+            biography:item.Biography,
+            dateOfBirth:new Date(item.Birthday),
+            email:item.Email,
+            image: item.Image
         })
     })
 }
-    //book updated successfuly do redirect user to viewBugs
-    if(bookUpdateStatus.hasOwnProperty('message')){
-        dispatch(fetchBooks())
-        dispatch(editBookModal(false))
-        dispatch(clearUpdateStatus())
+    
+    if(authorUpdateStatus.hasOwnProperty('message')){
+        dispatch(fetchAuthors())
+        dispatch(editAuthorModal(false))
+        dispatch(clearAuthorUpdateStatus())
         dispatch(clearUploadImageStatus())
-        navigate('/books')
+        navigate('/authors')
     }
 
- },[bookToEdit, bookUpdateStatus])
+ },[authorToEdit, authorUpdateStatus.message])
+
 
  const createRowsAuthors = () =>{
 
- if(values.authors.includes(',')){
-    values.authors.split(',').map(item=>{
+    Object.values(authorBooks)
+    .map(item=>{
         let firstCol = <div>
-                           {item}    
+                           {item.Title}    
                         </div>
     
-        let secondCol = <span onClick={()=>viewAuthor(item)}> <VisibilityOutlinedIcon /> </span>
+        let secondCol = <span onClick={()=>viewBook(item.Title)}> <VisibilityOutlinedIcon /> </span>
         rows.push(createDataAuthors(firstCol, secondCol))  
      })
- }else{
-    let firstColumn = <div>
-                {values.authors}   
-                </div>
-
-    let secondColumn = <span onClick={()=>viewAuthor(values.authors)}> 
-                         <VisibilityOutlinedIcon /> 
-                        </span>
-    rows.push(createDataAuthors(firstColumn, secondColumn)) 
- }
+ 
  }
 
 const handleChange = name => event => {
 
-    if(name === 'addedAuthor' && values.authors.split(',').includes(event.target.value)){
-        setValues({
-            ...values,
-            error:`Author ${event.target.value} already exist`
-        })
+    if(name === 'dateOfBirth'){
     
+        setValues({...values, [name]:event}) 
         return
         
-    }else{
-
-        setValues({...values, 
-            [name]:event.target.value,
-            error:''})
     }
-     
-    
+
+    if(name === 'addedAuthor' && Object.values(books).includes(event.target.value)){
+        setValues({
+            ...values,
+            error:`Book ${event.target.value} already exist`
+        })
+        return   
+    }
+   setValues({...values, [name]:event.target.value})       
 }
 
 const handleUpload = event => {
-    
-    let formData = new FormData()
-    //If image for any book is already changed and includes timestamp get only root name and add
-    //timestamp and extension
-    if(bookToEdit[0].Image.includes('/') && bookToEdit[0].Image.includes('images')){
-        formData.append('test', event.target.files[0], `${bookToEdit[0].Image.split('/')[2].split('-')[0]}-${Date.now()}.${event.target.files[0].name.split('.')[1]}`)
-    }else{
-        //if new image uploaded name it by using original name of the first image and add
-        //timestamp. Timestamp used to prevent caching error
-        if(bookToEdit[0].Image.includes('noimgUser')
-            || bookToEdit[0].Image.includes('noimg')){
+     
+        let formData = new FormData()
+        //If image for any book is already changed and includes timestamp get only root name and add
+        //timestamp and extension
+        if(authorToEdit[0].Image.includes('/') && authorToEdit[0].Image.includes('images')){
+            formData.append('test', event.target.files[0], `${authorToEdit[0].Image.split('/')[2].split('-')[0]}-${Date.now()}.${event.target.files[0].name.split('.')[1]}`)
+        }else{
+
+            if(authorToEdit[0].Image.includes('noimgUser')
+            || authorToEdit[0].Image.includes('noimg')){
                 formData.append('test', event.target.files[0], `image-${Date.now()}.${event.target.files[0].name.split('.')[1]}`)  
             }else{
                 formData.append('test', event.target.files[0], `${values.image}-${Date.now()}.${event.target.files[0].name.split('.')[1]}`)
             }
         
-    }
+        }
 
-    dispatch(uploadBookImage(formData))
-}
-
-const viewAuthor = (name) => {
-    dispatch(setAuthorData(Object.values(authors)
-    .filter(item=>item.Name===name)))
-
-    dispatch(displayAuthorDataModal(true))
+        dispatch(uploadBookImage(formData))
     
 }
 
-const clickHandler = () => {
+const viewBook = (book) => {
+    dispatch(setBookData(Object.values(books)
+    .filter(item=>item.Title===book)))
 
-    const book = {
-            params:bookToEdit.map(item=>item._id),
+    dispatch(displayBookDataModal(true))
+    
+}
+const clickHandler = () => {
+    const author = {
+            params:authorToEdit.map(item=>item._id),
             data:{
                 Id: values.id,
-                Title:values.title,
-                Description:values.description,
-                Pages:values.pages,
-                Publisher:values.publisher,
-                Price:values.price,
-                Author:values.authors,
-                Image: uploadImageStatus.hasOwnProperty('imageUrl') ? 
+                Name: values.name,
+                Biography: values.biography,
+                Birthday: values.dateOfBirth,
+                Email: values.email, 
+                Image:uploadImageStatus.hasOwnProperty('imageUrl') ? 
                 uploadImageStatus.imageUrl
-                : values.image
+                : values.image 
+               
             }
         }
 
-    dispatch(updateBookData(book))
+    dispatch(updateAuthorData(author))
 }
-
-
 
 const uploadPhoto = () => {
    document.getElementById('upload').click()
-}
-
-const addAuthor = () => {
-
-    if(values.addedAuthor === ''){
-        setValues({
-            ...values,
-            error:'Please select author'
-        })
-        return
-    }else if(values.authors.slice(',').includes(values.addedAuthor)){
-        setValues({
-            ...values,
-            error:'Author already exists'
-        })
-        return
-    }
-
-    setValues({
-        ...values,
-        error:'',
-        authors: `${values.authors},${values.addedAuthor}`
-    })
-    
 }
 
 
@@ -323,26 +284,25 @@ return (
 
 <Dialog
 fullScreen
-open={showEditBookModal}
-//onClose={()=>dispatch(setEditBug(false))}
+open={showAuthorModal}
 aria-labelledby="modal-modal-title"
 aria-describedby="modal-modal-description">
 
-<DialogContent tabIndex={-1}>
-         
-<Typography variant='h3'>
-    Book
-</Typography>
+    <DialogContent tabIndex={-1}>
+            
+    <Typography variant='h3'>
+        Author
+    </Typography>
 
-<input 
-onChange={(event)=>handleUpload(event)}
-type='file' 
-id='upload' 
-style={{visibility:"hidden"}}></input>
+    <input 
+    onChange={(event)=>handleUpload(event)}
+    type='file' 
+    id='upload' 
+    style={{visibility:"hidden"}}></input>
 
-<Grid container justifyContent={'center'}>
+    <Grid container justifyContent={'center'}>
 
-    <Grid item xs={12} md={8} lg={8} xl={8}>
+      <Grid item xs={12} md={8} lg={8} xl={8}>
 
         <Grid container style={{
             marginBottom:'4%', paddingBottom:'10px'}}>
@@ -375,7 +335,7 @@ style={{visibility:"hidden"}}></input>
                         <Typography 
                         variant='h5' 
                         className={classes.inputTitle}>
-                            Title:
+                            Name:
                         </Typography>
                     </Item>
                 </Grid>
@@ -385,9 +345,10 @@ style={{visibility:"hidden"}}></input>
           
                         <Item >
                             <Input 
-                            fullWidth
-                            className={classes.inputField}
-                            onChange={handleChange('title')} value={values.title}/>
+                                fullWidth
+                                className={classes.inputField}
+                                onChange={handleChange('name')} 
+                                value={values.name}/>
                         </Item>
     
                     </Grid>
@@ -399,21 +360,21 @@ style={{visibility:"hidden"}}></input>
                         <Typography 
                         variant='h5' 
                         className={classes.inputTitle}>
-                        Description:
+                        Biography:
                         </Typography>
                     </Item>
                 </Grid>
         
-                <Grid item xs={12} md={9} lg={9} xl={9}>
+                <Grid item xs={12} md={8} lg={8} xl={8}>
             
-                    <Item className={classes.inputField} style={{minWidth:"100%"}}>
+                <Item className={classes.inputField} style={{width:"80%"}}>
                         <TextField
                         multiline
                         fullWidth
                         minRows={4}
                         className={classes.inputField}
-                        onChange={handleChange('description')} 
-                        value={values.description}/>
+                        onChange={handleChange('biography')} 
+                        value={values.biography}/>
                     </Item>
                     
                 </Grid>
@@ -423,72 +384,48 @@ style={{visibility:"hidden"}}></input>
                         <Typography 
                         variant='h5' 
                         className={classes.inputTitle}>
-                        Pages:
+                        DoB:
                         </Typography>
                     </Item>
                 </Grid>
         
-                <Grid item xs={6} md={3} lg={3} xl={3}>
-            
-                    <Item>
-                        <Input 
-                            fullWidth
-                            className={classes.inputField}
-                            onChange={handleChange('pages')} 
-                            value={values.pages}/>
-                    </Item>
-                    
-                </Grid>
 
-                <Grid item xs={12} md={3} lg={3} xl={3}>
-                    <Item className={classes.label}>
-                        <Typography 
-                        variant='h5' 
-                        className={classes.inputTitle}>
-                            Price:
-                        </Typography>
-                    </Item>
-                </Grid>
-        
-                <Grid item xs={6} md={3} lg={3} xl={3}>
-            
+                <Grid item xs={12} md={9} lg={9} xl={9}>
                     <Item>
-                        <Input 
-                            fullWidth
-                            className={classes.inputField}
-                            onChange={handleChange('price')} value={values.price}/>
-                    </Item>
-                    
-                </Grid>
-
-                <Grid item xs={12} md={3} lg={3} xl={3}>
-                    <Item className={classes.label}>
-                        <Typography 
-                        variant='h5' 
-                        className={classes.inputTitle}>
-                            Publishers:
-                        </Typography>
-                    </Item>
-                </Grid>
-
-                <Grid item xs={6} md={3} lg={3} xl={3}>
-            
-                    <Item>
-                        
-                        <SelectField
-                            handleChange={handleChange('publisher')} 
-                            selectedValues={values.publisher ?
-                            values.publisher : ''}
-                            object={publishers} 
-                            objectIndex={'name'}
+                        <DateInput 
+                        selectedDate={values.dateOfBirth}
+                        height={'40px'}
+                        changeHandler={handleChange('dateOfBirth')}
+                        value={dateFormat(values.dateOfBirth, 'mm/dd/yyyy')}
                         />
-                
                     </Item>
-               
+                    
                 </Grid>
+
+                <Grid item xs={12} md={3} lg={3} xl={3}>
+                    <Item className={classes.label}>
+                        <Typography 
+                        variant='h5' 
+                        className={classes.inputTitle}>
+                        Email:
+                        </Typography>
+                    </Item>
+                </Grid>
+        
+                <Grid item xs={6} md={6} lg={6} xl={6}>
+            
+                    <Item>
+                        <Input 
+                            fullWidth
+                            className={classes.inputField}
+                            onChange={handleChange('email')} value={values.email}/>
+                    </Item>
+                    
+                </Grid>
+
 
                 <Grid item xs={12} md={12} lg={12} xl={12} className={classes.buttons}>
-                    <Grid container justifyContent={
+                    <Grid container marginTop='10px' justifyContent={
                         'flex-end'
                         }>
                         <Item className={classes.label}>
@@ -500,7 +437,7 @@ style={{visibility:"hidden"}}></input>
                                 height:'40px', 
                                 marginRight:'20px'}}>Save</Button>
                             <Button 
-                            onClick={()=>dispatch(editBookModal(false))}
+                            onClick={()=>dispatch(editAuthorModal(false))}
                             style={{minWidth:'100px', height:'40px'}}
                             variant='contained'>Cancel</Button>
                            
@@ -511,10 +448,31 @@ style={{visibility:"hidden"}}></input>
                     
                             
                 </Grid>
+                {authorUpdateStatus.hasOwnProperty('error') ?
+                <Grid container marginTop='10px' justifyContent={
+                        'center'
+                        }>
+                        <Item className={classes.label}>
+                       
+                            <Typography 
+                                variant='h6' 
+                                style={{
+                                display:'inline-flex', 
+                                paddingTop:'10px',
+                                textAlign:'center',
+                                color:'red',
+                                marginBottom:'1opx'
+                                }}>
+                                {authorUpdateStatus.error}
+                            </Typography> 
+                        </Item>
 
-
+                       
+                    </Grid>
+                   
+                    : null}    
             </Grid>  
-
+                      
             
         
         </Grid>
@@ -531,9 +489,9 @@ style={{visibility:"hidden"}}></input>
                     style={{width:'220px', marginBottom:'10px'}}
                     src={Object.keys(uploadImageStatus).length !== 0 && uploadImageStatus.hasOwnProperty('imageUrl')
                         ? uploadImageStatus.imageUrl
-                        : Object.keys(bookToEdit).length !== 0 ?
+                        : Object.keys(authorToEdit).length !== 0 ?
                         `/images/${values.image.includes('/images') ? values.image.split('/')[2] : values.image+'.jpg'}`
-                        : 'test.jpg'
+                        : 'images/noimgUser.jpg'
                         }>
 
                     </CardMedia> 
@@ -550,93 +508,47 @@ style={{visibility:"hidden"}}></input>
                             Upload photo
                         </Button>
                     </Item>
-
-                    {uploadImageStatus.hasOwnProperty('Error') ?
-               
-                        <Typography 
-                            variant='h6' 
-                            style={{
-                            display:'inline-flex', 
-                            paddingTop:'10px',
-                            textAlign:'center',
-                            color:'red',
-                            marginBottom:'1opx'
-                            }}>
-                            {uploadImageStatus.Error}
-                        </Typography> 
-          
-                    : null}
-                    
                 </Grid>
-
+                {uploadImageStatus.hasOwnProperty('Error') ?
+               
+               <Typography 
+                   variant={'h6'}
+                   style={{
+                   display:'inline-flex', 
+                   paddingTop:'10px',
+                   textAlign:'center',
+                   color:'red',
+                   marginBottom:'1opx'
+                   }}>
+                   {uploadImageStatus.Error}
+               </Typography> 
+          
+      
+       : null} 
                 <Grid item xs={12} md={12} lg={12} xl={12}>
             
             <Grid container justifyContent={'center'}>
 
-             <Item style={{marginBottom:'10px'}}>
+                <Item style={{marginBottom:'10px'}}>
 
-                <TableComponent
-                    columns={columns}
-                    rows = {rows}
-                    createRows={createRowsAuthors}
-                    createData={createDataAuthors}
-                />
-             
-            </Item>
-
-        </Grid>
-        {addNewAuthor ? 
-        <>
-            <Grid container justifyContent={'center'}>
-            
-                <Item>
-               
-                        <SelectField
-                            handleChange={handleChange('addedAuthor')} 
-                            selectedValues={values.addedAuthor}
-                            object={authors} 
-                            objectIndex={'Name'}
-                        />
-
-                </Item>
-
-            </Grid>
-
-            <Grid container justifyContent={'center'}>
-            
-                <Item>
-                    <Button variant='contained' 
-                    onClick={()=>addAuthor()}
-                    style={{marginTop:"20px", marginBottom:'20px'}}>
-                        Add author
-                    </Button>
-                </Item>
+                    <TableComponent
+                        columns={columns}
+                        rows = {rows}
+                        createRows={createRowsAuthors}
+                        createData={createDataAuthors}
+                    />
                 
-            </Grid>
-
-            <Grid container justifyContent={'center'}>
-            
-                <Item>
-                    <Button variant='contained' 
-                    onClick={()=>dispatch(editBookModal(false))}
-                    style={{marginBottom:'20px'}}>
-                    Cancel</Button>
                 </Item>
-                
+
             </Grid>
-            </> : null}
+        
+                
             {
                         values.error !== '' ?
 
                         <Typography 
-                        variant='h6' 
-                        style={{
-                        display:'inline-flex', 
-                        paddingTop:'10px',
-                        textAlign:'center',
-                        color:'red',
-                        marginBottom:'1opx'
-                        }}>
+                        variant='h7' 
+                        className={classes.error}>
                         {values.error}
                         </Typography> : null
                     }
@@ -658,20 +570,18 @@ style={{visibility:"hidden"}}></input>
                         height:'40px', 
                         marginRight:'20px'}}>Save</Button>
                     <Button 
-                    onClick={()=>dispatch(editBookModal(false))}
-                    style={{
-                        minWidth:'100px', 
-                        height:'40px'}}
+                    onClick={()=>dispatch(editAuthorModal(false))}
+                    style={{minWidth:'100px', height:'40px'}}
                     variant='contained'>Cancel</Button>
                     
                 </Item>
-            </Grid>
-
+            </Grid>     
+            
         </Grid>
 
     </Grid>
     
-  </Grid>
+ </Grid>
 
  </DialogContent>
 
@@ -682,4 +592,4 @@ style={{visibility:"hidden"}}></input>
 
 }
 
-export default EditBook
+export default EditAuthor

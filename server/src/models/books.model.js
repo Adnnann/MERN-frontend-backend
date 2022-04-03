@@ -6,7 +6,7 @@ const BooksSchema = new moongose.Schema({
     },
     Title:{
         type: String,
-        required:'Title is required'
+        required:'Title is required',
     },
     Description:{
         type: String,
@@ -16,12 +16,14 @@ const BooksSchema = new moongose.Schema({
         type:String,
     },
     Pages:{
-        type:Number,
-        required:'Number of pages is required'
+        type:String,
+        required:'Number of pages is required',
+        match:[/^[0-9]*$/, 'Please enter numeric value for number of pages']
     },
     Price:{
         type:String,
-        required:'Price is required'
+        required:'Price is required',
+        match:[/^\d+(\.\d{1,2})?$/, 'Please enter numeric value for price']
     },
     Publisher:{
         type:String,

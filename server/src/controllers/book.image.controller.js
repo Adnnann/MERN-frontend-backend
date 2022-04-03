@@ -1,10 +1,7 @@
 import _ from 'lodash'
-import errorHandler from '../controllers/helpers/dbErrorHandlers'
 import fs from 'file-system'
 import fsExtra from 'fs-extra'
-import cpFile from 'cp-file'
 import Image from '../models/image.model'
-
 
 const create = (req, res, next) => {
 
@@ -45,13 +42,14 @@ const create = (req, res, next) => {
             fs.fs.readdirSync('./images')
             .filter(item=>item.includes(originalFileName))
             .map(item=>{
-                if(item !== newFile){
-                    console.log(item)
+                console.log(item)
+                if(item !== newFile && item !== 'noimg.jpg'
+                && item !== 'noimgUser.jpg'){
                     fs.fs.unlinkSync(`./images/${item}`)
                 }
             })
 
-        res.send({message: 'Cover image uploaded successfuly',
+       res.send({message: 'Cover image uploaded successfuly',
             imageUrl: `/images/${newFile}`})
             }
             
@@ -61,7 +59,7 @@ const create = (req, res, next) => {
         //Multer is not preventing user to upload message but reports only error.
         //Code below unlinkes file if there is any error (for example wrong file format)
         fs.fs.unlinkSync(`./${req.file.path}`)
-        return res.send({Error:'Format of the file must be PNG|JPEG|JPG|TXT'})
+        return res.send({Error:'Format of the file must be PNG | JPEG | JPG'})
     }
 
     }

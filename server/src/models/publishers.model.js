@@ -5,19 +5,28 @@ const PublishersSchema = new moongose.Schema({
        type:Number
     },
     name:{
-        type: String
+        type: String,
+        required:'Name of publisher is required',
     },
     address:{
-        type: String
+        type: Object,
+        required:'Address is required'
+
     },
     zipCode:{
-        type:String
+        type:String,
+        required:'Zip code is required',
+        
     },
     city:{
-        type:Number
+        type:String,
+        required:'City is required',
+        match:[/^[a-zA-Z]+$/, 'Only letters can be used for the city name' ]
     },
     country:{
-        type:String
+        type:String,
+        required:'Country is required',
+        match:[/^[a-zA-Z]+$/, 'Only letters can be used for the country name' ]
     }, 
 })
 

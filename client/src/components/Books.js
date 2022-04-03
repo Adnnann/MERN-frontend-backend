@@ -1,22 +1,23 @@
 import BooksHeader from "./core/BooksHeader"
 import { 
-  addBookModal,
+        addBookModal,
         editBookModal, 
         fetchAuthors, 
         getBooks,
-        getFilterForBooks
+        getFilterForBooks,
+        deleteBook,
+        getBookToDelete,
+        fetchBooks,
+        getUserLoginData,
+        fetchPublishers,
+        filterBooks,
+        editBook
 } from '../features/librarySlice';
 import { useSelector, useDispatch } from 'react-redux';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Grid, Typography } from "@mui/material";
-import FilterBooks from "./FilterBooks";
-import { editBook } from "../features/librarySlice";
-import { 
-        getUserLoginData,
-        fetchPublishers,
-        filterBooks
-} from "../features/librarySlice";
+import FilterBooks from "./SearchFilters";
 import { useEffect } from "react";
 import TableComponent from "./TableComponent";
 import { Tooltip } from "@mui/material";
@@ -30,13 +31,19 @@ const Books = () => {
   const userRole = userData.user ? userData.user.role : ''
   const books = useSelector(getBooks)
   const filterForBooks = useSelector(getFilterForBooks)
+  const deleteBookStatus = useSelector(getBookToDelete)
 
   useEffect(()=>{
+    
     dispatch(fetchPublishers())
     dispatch(fetchAuthors())
 
+    if(deleteBookStatus.hasOwnProperty('message')){
+      dispatch(fetchBooks())
+    }
 
-  },[])
+
+  },[dispatch, deleteBookStatus])
 
 
   //define table columns for displaying books
@@ -44,13 +51,13 @@ const Books = () => {
     { 
         id: 'id', 
         label: 'ID', 
-        minWidth: 10,
+        minWidth: 20,
         align:'center'
     },
     { 
         id: 'title', 
         label: 'Title', 
-        minWidth: 60,
+        minWidth: 100,
         align:'left'
     },
     {
@@ -58,14 +65,14 @@ const Books = () => {
       label: 'Pages',
       minWidth: 10,
       align: 'left',
-      format: (value) => value.toLocaleString('en-US'), 
+      format: (value) => value.toFixed(2), 
     },
     {
         id: 'price',
         label: 'Price',
         minWidth: 40,
         align: 'left',
-        format: (value) => value.toLocaleString('en-US'), 
+        format: (value) => value.toFixed(2), 
       },
       //if user admin => display add column (for adding, editing and deleting books) 
       //else don't
@@ -100,14 +107,14 @@ const createRowsBooks = () =>{
       const firstCol = <div>{item.Id}</div>
       const secondCol = <div>{item.Title}</div>
       const thirdCol =<span>{item.Pages}</span> 
-      const fourthCol =<span>{item.Price}</span> 
+      const fourthCol =<span>{Number(item.Price).toFixed(2)}</span> 
       const fifthCol = <span> 
                             <Tooltip title="Edit book">
                               <EditOutlinedIcon fontSize='small' onClick={()=>edit(item.Id)}/>
                             </Tooltip>
                             
                             <Tooltip title='Delete book'>
-                              <DeleteOutlineOutlinedIcon onClick={()=>deleteBook(item._id)} fontSize='small' />
+                              <DeleteOutlineOutlinedIcon onClick={()=>dispatch(deleteBook(item._id))} fontSize='small' />
                             </Tooltip>
                           </span>
       
@@ -125,20 +132,13 @@ const createRowsBooks = () =>{
     dispatch(editBookModal(true))
   }
 
-  const deleteBook = (id) => {
-    alert('clicked on delete')
-    //dispatch(setDeleteId(id))
-  }
-
   const addBook = () => {
     dispatch(addBookModal(true))
   }
 
   const filter = (e) => {
     dispatch(filterBooks(e.target.value))
-    console.log(filterForBooks)
   }
-
 
   return (
     <>

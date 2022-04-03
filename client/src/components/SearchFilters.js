@@ -2,8 +2,7 @@ import * as React from 'react';
 import { TextField } from '@mui/material';
 import { InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-export default function FilterBooks({filter}) {
-  
+export default function SearchFilters({filter}) {
   
   return (
     <TextField 

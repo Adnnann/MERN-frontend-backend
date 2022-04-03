@@ -1,10 +1,8 @@
 import Book from '../models/books.model'
 import _ from 'lodash'
 import dbErrorHandlers from '../controllers/helpers/dbErrorHandlers'
-import jwtDecode from 'jwt-decode'
-
 const createBook = (req, res) => {
-    
+
     const book = new Book(req.body) 
     book.save((err)=>{
         if(err){
@@ -14,13 +12,8 @@ const createBook = (req, res) => {
     })
 }
 const getBooks = (req, res) => {
-    // get id to enable filtering of data
-    const userId = jwtDecode(req.cookies.userJwtToken)._id
-    //filter data - get Books for last three days
+    
     Book.find({})
-    .where('userId').equals(userId)
-    //sort data in descinding order
-    .sort({"created":-1})
     .exec((err, Books) => {
         if(err){
             return res.send({error:dbErrorHandlers.getErrorMessage(err)})
@@ -30,6 +23,7 @@ const getBooks = (req, res) => {
 }
 
 const getBook =  (req, res) => {
+   
     res.status(200).json(req.profile)
 }
 const updateBook = (req, res, next) => {

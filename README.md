@@ -1,44 +1,53 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+# Description
 
-## Available Scripts
+App is implementation of library system for storing data about books, publishers, and authors.
 
-In the project directory, you can run:
+All users of the app are enabled to see all authors, books, and publishers, while only admin users have the ability to perform basic CRUD operations.
 
-### `npm start`
+To prevent CRUD operations from POSTMAN and similar tools, middleware is added to check if user is logged in and if user is admin. Checking of user role and signin status is done by using httponlycookie. If user has jwttoken stored in cookie user is logged in, while if jwtToken role value is admin, user is authorized to perform CRUD operations.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Admin can:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+1. Add, edit, and delete authors, publishers and books
 
-### `npm test`
+Users can:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. View authors, publishers and books
 
-### `npm run build`
+App enables admin to store images for authors and books. For this purpose mutler express middleware is used and static route. Multer will check if user has folder /images on express server and if not one will be created. 
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+All images used in app are stored in server/images folder. In case if user does not upload book or author image there are default images (for books noimg.jpr and for author - noimgUser.jpg)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+For importing files in database I used Mongo Compas. I have converted Excel file to JSON and then imported it into Atlas Mongo DB
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Important notes
 
-### `npm run eject`
+In order to use the app you shound change in server/config/config.js url for Atlas Mongo DB database and in client/.env file you should store following data:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### DATABASE=library
+### PASSWORD=jOS3nAMP9GVYKdKH
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+For this app user data delivered with the assignment were used and they can be used for grading the app.
+### User credentials
+Id	name	username	password	role
+1.	John Smith 	john	$ch00l	admin
+2.	Ana Boyle	ana	$ch00l	admin
+3.	Antonio Banderas	tony	$ch00l	user
+4.	Julio Iglesias	julio	$ch00l	user
+5.	Placido Domingo	place	$ch00l	user
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Default port for connection to the express server is 5000 and default proxy set in package.json in client folder is http://localhost:5000. In case you are using Mac change default port to 3001 as 5000 is not allowed on Mac. Also don't forget to change on proxy last part of the string (5000 to 3001)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+In this assignment I was mostly focused on creating reusable components: SelectField, DatePicker, Tables. I would highly appreciate your feedback about the design of components as I mostly focused on this aspect in phase 7 of Paragon
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Redux toolkit
+For state management Redux toolkit is used. For fetching API data redux thunk middleware is used.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Server and database
+For server express is used and all server logic is stored in server folder.
+
+## UI
+For UI Material UI (MUI) library is used.
+
+

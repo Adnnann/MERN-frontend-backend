@@ -84,6 +84,81 @@ export const uploadBookImage = createAsyncThunk('library/uploadImageStatus', asy
     .catch(err=>err)
 })
 
+export const updateAuthorData = createAsyncThunk('library/updateAuthorDataStatus', async(author)=>{
+    return await axios.put(`/api/authors/${author.params}`, author.data, {
+        headers:{
+        'Accept':'application/json',
+        'Content-Type':'application/json'
+      }
+    })
+    .then(response=>response.data)
+    .catch(error=>error)
+  })
+
+  export const deleteBook = createAsyncThunk('users/bookToDelete', async(params)=>{
+    const response = await axios.delete(`/api/books/${params}`,{
+      headers:{
+      'Accept':'application/json',
+      'Content-Type':'application/json'
+      },
+    })
+  return response.data
+  })
+
+  export const deleteAuthor = createAsyncThunk('users/authorToDelete', async(params)=>{
+    const response = await axios.delete(`/api/authors/${params}`,{
+      headers:{
+      'Accept':'application/json',
+      'Content-Type':'application/json'
+      },
+    })
+  return response.data
+  })
+
+  export const deletePublisher = createAsyncThunk('users/publisherToDelete', async(params)=>{
+    const response = await axios.delete(`/api/publishers/${params}`,{
+      headers:{
+      'Accept':'application/json',
+      'Content-Type':'application/json'
+      },
+    })
+  return response.data
+  })
+
+  export const updatePublisherData = createAsyncThunk('library/updatePublisherDataStatus', async(publisher)=>{
+    return await axios.put(`/api/publishers/${publisher.params}`, publisher.data, {
+        headers:{
+        'Accept':'application/json',
+        'Content-Type':'application/json'
+      }
+    })
+    .then(response=>response.data)
+    .catch(error=>error)
+  })
+
+  export const addPublisherData = createAsyncThunk('library/addPublisherDataStatus', async(publisher)=>{
+    return await axios.post(`/api/publishers`, publisher, {
+        headers:{
+        'Accept':'application/json',
+        'Content-Type':'application/json'
+      }
+    })
+    .then(response=>response.data)
+    .catch(error=>error)
+  })
+
+  export const addAuthorData = createAsyncThunk('library/addAuthorDataStatus', async(author)=>{
+    return await axios.post(`/api/authors`, author, {
+        headers:{
+        'Accept':'application/json',
+        'Content-Type':'application/json'
+      }
+    })
+    .then(response=>response.data)
+    .catch(error=>error)
+  })
+
+
 
 const initialState = {
     userLoginData: {},
@@ -98,8 +173,29 @@ const initialState = {
     addBookDataStatus:{},
     authors:{},
     filterForBooks:'',
+    filterForAuthors:'',
     authorData:{},
-    authorDataModal: false
+    authorDataModal: false,
+    disableAuthorNameField:false,
+    editAuthorModalStatus:false,
+    updateAuthorDataStatus:{},
+    bookData:{},
+    authorToEdit:{},
+    bookToDelete:{},
+    authorToDelete:{},
+    publisherToDelete:{},
+    authorBooks:{},
+    bookDataModal: false,
+    filterForPublishers:"",
+    publisherDataModal: false,
+    editPublisherModalStatus:false,
+    updatePublisherDataStatus:{},
+    publisherToEdit:{},
+    addPublisherDataStatus:{},
+    addPublisherModalStatus:false,
+    addAuthorDataStatus:{},
+    addAuthorModalStatus:false,
+
 }
 
 const librarySlice = createSlice({
@@ -125,12 +221,67 @@ const librarySlice = createSlice({
         filterBooks:(state, action) => {
             state.filterForBooks = action.payload
         },
+        filterAuthors:(state, action) => {
+            state.filterForAuthors = action.payload
+        },
         setAuthorData: (state, action) => {
             state.authorData = action.payload
         },
+        setBookData: (state, action) => {
+            state.bookData = action.payload
+        },
         displayAuthorDataModal:(state, action) => {
             state.authorDataModal = action.payload
-        }
+        },
+        setDisableAuthorNameField: (state, action) => {
+            state.disableAuthorNameField = action.payload
+        },
+        editAuthorModal:(state, action) => {
+            state.editAuthorModalStatus = action.payload
+        },
+        editAuthor:(state, action) => {
+            state.authorToEdit = Object.values(state.authors).filter(item=>item.Id===action.payload)
+        },
+        clearAuthorUpdateStatus: (state, action) => {
+            state.updateAuthorDataStatus = {}
+        },
+        setAuthorBooks: (state, action) => {
+            state.authorBooks = action.payload
+        },
+        displayBookDataModal:(state, action) => {
+            state.bookDataModal = action.payload
+        },
+        filterPublishers:(state, action) => {
+            state.filterForPublishers = action.payload
+        },
+        editPublisherModal:(state, action) => {
+            state.editPublisherModalStatus = action.payload
+        },
+        editPublisher:(state, action) => {
+            state.publisherToEdit = Object.values(state.publishers)
+            .filter(item=>item.name === action.payload)
+        },
+        displayPublisherModal: (state, action) => {
+            state.editPublisherModalStatus = action.payload
+        },
+        clearPublisherUpdateStatus: (state, action) => {
+            state.updatePublisherDataStatus = {}
+        },
+        addPublisherModal:(state, action) => {
+            state.addPublisherModalStatus = action.payload
+        },
+        clearAddPublisherData: (state, action) => {
+            state.addPublisherDataStatus = {}
+        },
+        clearUploadImageStatus:(state) => {
+            state.uploadImageStatus = {}
+        },
+        clearAddAuthorStatus:(state) => {
+            state.addAuthorDataStatus = {}
+        },
+        addAuthorModal:(state, action) => {
+            state.addAuthorModalStatus = action.payload
+        },
     },
     extraReducers:{
         [login.fulfilled]:(state, {payload}) => {
@@ -156,6 +307,27 @@ const librarySlice = createSlice({
         },
         [fetchAuthors.fulfilled]: (state, {payload}) => {
             return {...state, authors: payload}
+        },
+        [updateAuthorData.fulfilled]: (state, {payload}) => {
+            return {...state, updateAuthorDataStatus: payload}
+        },
+        [deleteBook.fulfilled]: (state,{payload}) => {
+            return {...state, bookToDelete:payload}
+        },
+        [deleteAuthor.fulfilled]: (state,{payload}) => {
+            return {...state, authorToDelete:payload}
+        },
+        [deletePublisher.fulfilled]: (state,{payload}) => {
+            return {...state, publisherToDelete:payload}
+        },
+        [updatePublisherData.fulfilled]: (state, {payload}) => {
+            return {...state, updatePublisherDataStatus: payload}
+        },
+        [addPublisherData.fulfilled]: (state, {payload}) => {
+            return {...state, addPublisherDataStatus: payload}
+        },
+        [addAuthorData.fulfilled]: (state, {payload}) => {
+            return {...state, addAuthorDataStatus: payload}
         }
     }
 })
@@ -168,8 +340,26 @@ export const {
     addBookModal,
     clearAddBookStatus,
     filterBooks,
+    filterAuthors,
+    filterPublishers,
     setAuthorData,
-    displayAuthorDataModal
+    displayAuthorDataModal,
+    editAuthorModal,
+    setBookData,
+    setDisableAuthorNameField,
+    editAuthor,
+    clearAuthorUpdateStatus,
+    setAuthorBooks,
+    displayBookDataModal,
+    editPublisherModal,
+    publisherData,
+    editPublisher,
+    clearPublisherUpdateStatus,
+    addPublisherModal,
+    clearAddPublisherData,
+    clearUploadImageStatus,
+    clearAddAuthorStatus,
+    addAuthorModal
 } = librarySlice.actions
 
 export const getUserLoginData = (state) => state.library.userLoginData
@@ -184,7 +374,26 @@ export const getUpdateBookDataStatus = (state) => state.library.updateBookDataSt
 export const getAddBookDataStatus = (state) => state.library.addBookDataStatus
 export const getAuthors = (state) => state.library.authors
 export const getFilterForBooks = (state) => state.library.filterForBooks
+export const getFilterForAuthors = (state) => state.library.filterForAuthors
 export const getAuthorData = (state) => state.library.authorData
 export const getAuthorDataModalStatus = (state) => state.library.authorDataModal
+export const getDisableAuthorNameField = (state) => state.library.disableAuthorNameField
+export const getEditAuthorModal = (state) => state.library.editAuthorModalStatus
+export const getBookData = (state) => state.library.bookData
+export const getUpdateAuthorDataStatus = (state) => state.library.updateAuthorDataStatus
+export const getAuthorToEdit = (state) => state.library.authorToEdit
+export const getBookToDelete = (state) => state.library.bookToDelete
+export const getAuthorToDelete = (state) => state.library.authorToDelete
+export const getPublisherToDelete = (state) => state.library.publisherToDelete
+export const getAuthorBooks = (state) => state.library.authorBooks
+export const getBookDataModal = (state) => state.library.bookDataModal
+export const getPublisherToEdit = (state) => state.library.publisherToEdit
+export const getFilterForPublishers = (state) => state.library.filterForPublishers
+export const getUpdatePublisherDataStatus = (state) => state.library.updatePublisherDataStatus
+export const getAddPublisherDataStatus = (state) => state.library.addPublisherDataStatus
+export const getPublisherDataModal = (state) => state.library.editPublisherModalStatus
+export const getAddPublisherModal = (state) => state.library.addPublisherModalStatus
+export const getAddAuthorDataStatus = (state) => state.library.addAuthorDataStatus
+export const getAddAuthorModal = (state) => state.library.addAuthorModalStatus
 
 export default librarySlice.reducer

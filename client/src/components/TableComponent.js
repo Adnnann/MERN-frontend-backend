@@ -13,7 +13,7 @@ const TableComponent = ({columns,  createData,  createRows, rows}) => {
   createRows()
     
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', overflowX:"none" }}>
+    <Paper sx={{ width: '100%', overflow: 'hidden', overflowX:"none", marginBottom:'50px' }}>
     
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">

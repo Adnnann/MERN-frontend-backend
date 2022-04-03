@@ -2,23 +2,14 @@ import React from "react";
 import { AppBar } from '@mui/material';
 import { Toolbar } from '@mui/material';
 import Box from '@mui/material/Box'
-// import {signoutUser, 
-//         getUserSigninData,
-//         cleanStore,
-//         getUserDataToDisplay} from "../../features/usersSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useSelector } from "react-redux";
-import { styled, alpha } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
-import { useState } from "react";
 import BookIcon from '../../assets/images/bookIcon.png'
 import { Grid } from "@mui/material";
-import Item from '@mui/material/Grid'
-import { Button, ButtonGroup } from "@mui/material";
-import { getUserLoginData, logout, resetStore } from '../../features/librarySlice';
+import { Button } from "@mui/material";
+import { logout, resetStore } from '../../features/librarySlice';
 import LogoutIcon from '@mui/icons-material/Logout'
 import Buttons from "./Buttons";
 

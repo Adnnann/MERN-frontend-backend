@@ -1,16 +1,17 @@
 import express from 'express'
 import authorsCtrl from '../controllers/authors.controller'
+import authCtrl from '../controllers/auth.controller'
 
 const router = express.Router()
 
 router.route('/api/authors')
-.post(authorsCtrl.createAuthor)
+.post(authCtrl.hasAuthorization, authorsCtrl.createAuthor)
 .get(authorsCtrl.getAuthors)
 
 router.route('/api/authors/:authorId')
-.get(authorsCtrl.getAuthor)
-.put(authorsCtrl.updateAuthor)
-.delete(authorsCtrl.removeAuthor)
+.get(authCtrl.hasAuthorization, authorsCtrl.getAuthor)
+.put(authCtrl.hasAuthorization, authorsCtrl.updateAuthor)
+.delete(authCtrl.hasAuthorization, authorsCtrl.removeAuthor)
 
 router.param('authorId', authorsCtrl.authorByID)
 
