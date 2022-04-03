@@ -22,6 +22,8 @@ For importing files in database I used Mongo Compas. I have converted Excel file
 
 ## Important notes
 
+I had to name app library-2 as there is system folder library on Mac and I could not use it. If I rename it on git I will probably have troubles in process of correcting potential errors.
+
 In order to use the app you shound change in server/config/config.js url for Atlas Mongo DB database and in client/.env file you should store following data:
 
 ### DATABASE=library
