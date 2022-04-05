@@ -9,7 +9,10 @@ import {
         editPublisherModal,
         filterPublishers,
         deletePublisher,
-        addPublisherModal
+        addPublisherModal,
+        userToken,
+        getToken,
+        resetStore
 } from '../features/librarySlice';
 import { useSelector, useDispatch } from 'react-redux';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -20,8 +23,9 @@ import { useEffect } from "react";
 import TableComponent from "./TableComponent";
 import { Tooltip } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import dateFormat from 'dateformat'
 import _ from 'lodash'
+import { useNavigate } from "react-router"
+import jwtDecode from "jwt-decode";
 
 
 const Publishers = () => {
@@ -32,16 +36,29 @@ const Publishers = () => {
   const publishers = useSelector(getPublishers)
   const filterForPublishers = useSelector(getFilterForPublishers)
   const deletePublisherStatus = useSelector(getPublisherToDelete)
-
+  const token = useSelector(getToken)
+  const navigate = useNavigate()
 
   useEffect(()=>{
+
+    dispatch(fetchPublishers())
+    dispatch(userToken())
+    //In case user tried to visit url /protected without token, redirect 
+    //to signin page
+    if(token === 'Request failed with status code 500' 
+        || token ==='Request failed with status code 401'){
+        dispatch(resetStore())
+        navigate('/')
+    }
+    
+  
     
     if(deletePublisherStatus.hasOwnProperty('message')){
       dispatch(fetchPublishers())
     }
 
 
-  },[dispatch, deletePublisherStatus])
+  },[dispatch, deletePublisherStatus, token.length])
 
 
   //define table columns for displaying books
@@ -68,7 +85,7 @@ const Publishers = () => {
       },
       //if user admin => display add column (for adding, editing and deleting books) 
       //else don't
-      Object.keys(userData).length !== 0 && userRole === 'admin' ?
+      token.hasOwnProperty('message') && jwtDecode(token.message).role === 'admin' ?
       { 
         id: 'edit',
         label:<Tooltip title='Add book'>

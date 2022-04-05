@@ -31,6 +31,7 @@ import {
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import TableComponent from './TableComponent';
 import SelectField from './SelectField';
+import { red } from '@mui/material/colors';
 
 const useStyle = makeStyles((theme)=>({
     dialogWindow:{
@@ -100,6 +101,11 @@ const useStyle = makeStyles((theme)=>({
     inputTitle:{
         display:'inline-flex', 
         paddingTop:'10px'
+    },
+    mobileWinErrors:{
+        [theme.breakpoints.up('md')]:{
+            display:'none'
+        }
     }
 
 }))
@@ -192,7 +198,9 @@ if(Object.keys(bookToEdit).length !== 0){
         navigate('/books')
     }
 
- },[bookToEdit, bookUpdateStatus])
+ },[bookToEdit, bookUpdateStatus.message])
+
+
 
  const createRowsAuthors = () =>{
 
@@ -316,6 +324,12 @@ const addAuthor = () => {
         authors: `${values.authors},${values.addedAuthor}`
     })
     
+}
+
+const cancel = () => {
+    dispatch(clearUpdateStatus())
+    dispatch(clearUploadImageStatus())
+    dispatch(editBookModal(false))
 }
 
 
@@ -500,13 +514,35 @@ style={{visibility:"hidden"}}></input>
                                 height:'40px', 
                                 marginRight:'20px'}}>Save</Button>
                             <Button 
-                            onClick={()=>dispatch(editBookModal(false))}
+                            onClick={cancel}
                             style={{minWidth:'100px', height:'40px'}}
                             variant='contained'>Cancel</Button>
                            
                         </Item>
 
+            {bookUpdateStatus.hasOwnProperty('error') ?
+                <Grid container marginTop='10px' justifyContent={
+                        'center'
+                        }>
+                        <Item className={classes.label}>
                        
+                            <Typography 
+                                variant='h6' 
+                                style={{
+                                display:'inline-flex', 
+                                paddingTop:'10px',
+                                textAlign:'center',
+                                color:'red',
+                                marginBottom:'1opx'
+                                }}>
+                                {bookUpdateStatus.error}
+                            </Typography> 
+                        </Item>
+
+                       
+                    </Grid>
+                   
+                    : null} 
                     </Grid>
                     
                             
@@ -618,7 +654,7 @@ style={{visibility:"hidden"}}></input>
             
                 <Item>
                     <Button variant='contained' 
-                    onClick={()=>dispatch(editBookModal(false))}
+                    onClick={cancel}
                     style={{marginBottom:'20px'}}>
                     Cancel</Button>
                 </Item>
@@ -645,6 +681,16 @@ style={{visibility:"hidden"}}></input>
 
     </Grid>
 
+    {bookUpdateStatus.hasOwnProperty('error') ?
+                            <Typography 
+                            className={classes.mobileWinErrors}
+                                variant='h6' 
+                               style={{color:'red', marginTop:'0', marginBottom:'10px'}}>
+                                {bookUpdateStatus.error}
+                            </Typography> 
+                        
+                    : null}
+
     <Grid item xs={12} md={12} lg={12} xl={12} className={classes.mobileWinButtons}>
             <Grid container justifyContent={
                 'flex-end'
@@ -665,6 +711,7 @@ style={{visibility:"hidden"}}></input>
                     variant='contained'>Cancel</Button>
                     
                 </Item>
+                 
             </Grid>
 
         </Grid>

@@ -3,9 +3,24 @@ import { Box } from '@mui/system'
 import Item from '@mui/material/Grid'
 import { Typography } from '@mui/material'
 import Header from './core/Header'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { userToken, getUserLoginData } from '../features/librarySlice'
+
 
 const Home = () => {
 
+    const dispatch = useDispatch()
+    const userLoginData = useSelector(getUserLoginData)
+
+    useEffect(() => {
+       
+        if(!userLoginData.hasOwnProperty("token")){
+            dispatch(userToken())
+            
+        }
+    }, [])
+    
     return(
         <>
         <Header />  

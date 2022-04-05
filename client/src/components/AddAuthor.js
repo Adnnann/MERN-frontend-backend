@@ -128,6 +128,8 @@ const [values, setValues] = useState({
 //book object in useEffect dependency array
 useEffect(()=>{
 
+    dispatch(fetchAuthors())
+
         setValues({
             id: Object.values(authors).length,
             name:'',
@@ -139,9 +141,9 @@ useEffect(()=>{
     
     if(authorAddStatus.hasOwnProperty('message')){
         dispatch(clearAddAuthorStatus())
-        dispatch(addAuthorModal(false))
         dispatch(clearUploadImageStatus())
         dispatch(fetchAuthors())
+        dispatch(addAuthorModal(false))
     }
 
  },[authorAddStatus.message])
@@ -202,8 +204,12 @@ const cancel = () => {
         email:'',
         image: ''
     })
+    dispatch(clearAddAuthorStatus())
+        dispatch(clearUploadImageStatus())
     dispatch(addAuthorModal(false))
 }
+
+
 
 return (
 

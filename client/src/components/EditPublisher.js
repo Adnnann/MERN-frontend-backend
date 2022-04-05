@@ -170,6 +170,12 @@ const clickHandler = () => {
     dispatch(updatePublisherData(publisher))
 }
 
+const cancel = () => {
+    dispatch(clearPublisherUpdateStatus())
+    dispatch(clearUploadImageStatus())
+    dispatch(editPublisherModal(false))
+}
+
 
 return (
 
@@ -325,7 +331,7 @@ aria-describedby="modal-modal-description">
                                 height:'40px', 
                                 marginRight:'20px'}}>Save</Button>
                             <Button 
-                            onClick={()=>dispatch(editPublisherModal(false))}
+                            onClick={cancel}
                             style={{minWidth:'100px', height:'40px'}}
                             variant='contained'>Cancel</Button>
                            

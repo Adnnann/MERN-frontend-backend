@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar } from '@mui/material';
+import { AppBar, Tooltip } from '@mui/material';
 import { Toolbar } from '@mui/material';
 import Box from '@mui/material/Box'
 import { useDispatch } from "react-redux";
@@ -97,7 +97,7 @@ const logOut = () => {
         
     <AppBar position="static"  >
 
- <Button 
+        <Button 
         style={{width:'120px', marginLeft:'auto'}}
         onClick={logOut} 
         variant='text'
@@ -106,7 +106,10 @@ const logOut = () => {
         <Toolbar style={{marginBottom:'0'}}>
 
             <Grid container>
+
+            <Tooltip title="Click to return to home page">
                 <Box
+                onClick={()=>navigate('/')}
                 component="img"
                 sx={{height: 64, 
                 marginTop:'10px', 
@@ -116,6 +119,7 @@ const logOut = () => {
                 alt="Book"
                 src={BookIcon}
                 />
+            </Tooltip>
 
                 <Typography variant="h4" className={classes.title}>
                     Library

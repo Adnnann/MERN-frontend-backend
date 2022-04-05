@@ -12,6 +12,9 @@ import {
         getAuthorToDelete,
         setAuthorBooks,
         addAuthorModal,
+        getToken,
+        userToken,
+        resetStore,
 } from '../features/librarySlice';
 import { useSelector, useDispatch } from 'react-redux';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -24,6 +27,8 @@ import { Tooltip } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import dateFormat from 'dateformat'
 import _ from 'lodash'
+import { useNavigate } from "react-router"
+import jwtDecode from 'jwt-decode'
 
 
 const Authors = () => {
@@ -35,17 +40,31 @@ const Authors = () => {
   const authors = useSelector(getAuthors)
   const filterForAuthors = useSelector(getFilterForAuthors)
   const deleteAuthorStatus = useSelector(getAuthorToDelete)
-
+  const token = useSelector(getToken)
+  const navigate = useNavigate()
+  
 
   useEffect(()=>{
+
+    dispatch(userToken())
+    //In case user tried to visit url /protected without token, redirect 
+    //to signin page
+    if(token === 'Request failed with status code 500' 
+        || token ==='Request failed with status code 401'){
+        dispatch(resetStore())
+        navigate('/')
+    }
+    
+    
     
     if(deleteAuthorStatus.hasOwnProperty('message')){
       dispatch(fetchAuthors())
     }
 
 
-  },[dispatch, deleteAuthorStatus])
+  },[dispatch, deleteAuthorStatus, token.length])
 
+  
 
   //define table columns for displaying books
   const columns = [
@@ -83,7 +102,7 @@ const Authors = () => {
         format: (value) => value.toLocaleString('en-US') 
       },
       //if user is admin display add column (for adding, editing and deleting books) 
-      Object.keys(userData).length !== 0 && userRole === 'admin' ?
+       token.hasOwnProperty('message') && jwtDecode(token.message).role === 'admin' ?
       { 
         id: 'edit',
         label:<Tooltip title='Add book'>

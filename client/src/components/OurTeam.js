@@ -6,8 +6,20 @@ import Item from '@mui/material/Grid'
 import { Card, CardMedia, CardContent } from '@mui/material'
 import GroupsIcon from '@mui/icons-material/Groups';
 import Header from './core/Header'
+import { userToken } from '../features/librarySlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 const OurTeam = () => {
+
+
+    const dispatch = useDispatch()
+
+   useEffect(() => {
+       
+        dispatch(userToken())
+
+    }, [])
 
     const librarians = [librarian1, librarian2, librarian3]
     const position = ['Developer', 'UI/UX Designer','QA Engineer']

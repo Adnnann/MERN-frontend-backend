@@ -124,7 +124,6 @@ useEffect(()=>{
     //book updated successfuly do redirect user to viewBugs
     if(publisherUpdateStatus.hasOwnProperty('message')){
         dispatch(fetchPublishers())
-        dispatch(addPublisherModal(false))
         dispatch(clearAddPublisherData())
         dispatch(clearUploadImageStatus())
         
@@ -139,7 +138,7 @@ useEffect(()=>{
             error:''  
         })
         
-        navigate('/publishers')
+        dispatch(addPublisherModal(false))
     }
 
  },[publisherUpdateStatus])
@@ -187,7 +186,9 @@ const cancel = () => {
         country:'',
         error:''  
     })
- dispatch(addPublisherModal(false))
+    dispatch(clearAddPublisherData())
+    dispatch(clearUploadImageStatus())
+    dispatch(addPublisherModal(false))
 }
 
 return (

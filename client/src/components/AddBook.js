@@ -140,7 +140,6 @@ useEffect(()=>{
     //book updated successfuly do redirect user to viewBugs
     if(bookAddStatus.hasOwnProperty('message')){
         dispatch(fetchBooks())
-        dispatch(addBookModal(false))
         dispatch(clearAddBookStatus())
         dispatch(setDisableAuthorNameField(false))
         dispatch(clearUploadImageStatus())
@@ -211,6 +210,9 @@ const cancel = () => {
         image:'',
         imageFile:''
     })
+
+    dispatch(clearAddBookStatus())
+    dispatch(clearUploadImageStatus())
     dispatch(setDisableAuthorNameField(false))
     dispatch(addBookModal(false))
 }

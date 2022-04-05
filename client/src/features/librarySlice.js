@@ -12,6 +12,17 @@ export const login = createAsyncThunk('library/userLoginData', async(userData)=>
     .catch(err=>err)
 })
 
+export const userToken = createAsyncThunk('users/protected', async()=>{
+    return await axios.get('/protected', { 
+      headers:{
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    .then(response=>response.data)
+    .catch(error=>error.message)
+  })
+  
+
 export const logout = createAsyncThunk('library/userLogoutData', async()=>{
     return await axios.post('/auth/signout',{
         headers:{
@@ -195,6 +206,7 @@ const initialState = {
     addPublisherModalStatus:false,
     addAuthorDataStatus:{},
     addAuthorModalStatus:false,
+    userToken:{}
 
 }
 
@@ -328,6 +340,9 @@ const librarySlice = createSlice({
         },
         [addAuthorData.fulfilled]: (state, {payload}) => {
             return {...state, addAuthorDataStatus: payload}
+        },
+        [userToken.fulfilled]: (state, {payload}) => {
+            return {...state, userToken:payload}
         }
     }
 })
@@ -395,5 +410,6 @@ export const getPublisherDataModal = (state) => state.library.editPublisherModal
 export const getAddPublisherModal = (state) => state.library.addPublisherModalStatus
 export const getAddAuthorDataStatus = (state) => state.library.addAuthorDataStatus
 export const getAddAuthorModal = (state) => state.library.addAuthorModalStatus
+export const getToken = (state) => state.library.userToken
 
 export default librarySlice.reducer

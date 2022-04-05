@@ -4,13 +4,16 @@ import { makeStyles } from "@mui/styles"
 import { 
         fetchBooks, 
         getUserLoginData, 
-        login, 
+        login,
+        userToken, 
 } from "../features/librarySlice"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { useEffect } from "react"
 import {Grid} from '@mui/material'
 import Header from "./core/Header"
+import { Input } from "@mui/material"
+
 
 const useStyles = makeStyles(theme=>({
     error: {
@@ -45,8 +48,8 @@ const useStyles = makeStyles(theme=>({
     const Login = () => {
     
         const classes = useStyles()
+       
         const userLoginData = useSelector(getUserLoginData)
-       // const userLoginData = useSelector(getuserLoginData)
         const dispatch = useDispatch()
         const navigate = useNavigate()
        // const token = useSelector(getUserToken)
@@ -93,11 +96,13 @@ return(
         <Grid item xs={12} md={12} lg={12} xl={12} style={{marginTop:'10%'}}>
 
             <Typography variant='h6' style={{display:'inline-flex', marginRight:'10px'}}>Username</Typography>
-            
-            <input id="username" type='username' className={classes.inputFields}
-            value={values.username} onChange={handleChange('username')} 
+        
+            <Input 
+                className={classes.inputFields}
+                value={values.username} 
+                onChange={handleChange('username')} 
             />
-                
+           
         </Grid>
 
         <br />
@@ -105,8 +110,11 @@ return(
         <Grid item xs={12} md={12} lg={12} xl={12}>
 
             <Typography variant='h6' style={{display:'inline-flex', marginRight:'10px'}}>Password</Typography>
-            <input id="password" className={classes.inputFields}
-            value={values.password} onChange={handleChange('password')} 
+            <Input 
+                className={classes.inputFields}
+                value={values.password} 
+                type="password"
+                onChange={handleChange('password')} 
             />
                 
         </Grid>
