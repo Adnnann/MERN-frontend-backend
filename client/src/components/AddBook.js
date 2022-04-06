@@ -172,7 +172,7 @@ const handleUpload = event => {
    
     //if new image uploaded name it by using original name of the first image and add
     //timestamp. Timestamp used to prevent caching error
-    formData.append('test', event.target.files[0], `image-${Date.now()}.${event.target.files[0].name.split('.')[1]}`)
+    formData.append('test', event.target.files[0], `image${Math.max(...Object.values(books).map(item=>Number(item.Id)))+1}-${Date.now()}.${event.target.files[0].name.split('.')[1]}`)
     
     dispatch(uploadBookImage(formData))
 }

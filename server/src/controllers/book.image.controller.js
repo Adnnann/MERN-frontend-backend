@@ -42,7 +42,6 @@ const create = (req, res, next) => {
             fs.fs.readdirSync('./images')
             .filter(item=>item.includes(originalFileName))
             .map(item=>{
-
                 if(item !== newFile && item !== 'noimg.jpg'
                 && item !== 'noimgUser.jpg'){
                     fs.fs.unlinkSync(`./images/${item}`)
