@@ -46,6 +46,7 @@ const Authors = () => {
 
   useEffect(()=>{
 
+    dispatch(fetchAuthors())
     dispatch(userToken())
     //In case user tried to visit url /protected without token, redirect 
     //to signin page

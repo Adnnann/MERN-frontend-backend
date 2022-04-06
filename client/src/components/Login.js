@@ -63,6 +63,7 @@ const useStyles = makeStyles(theme=>({
 
             if(userLoginData.hasOwnProperty("token")){
                 dispatch(fetchBooks())
+                dispatch(userToken())
                 navigate('/books')
             }
             

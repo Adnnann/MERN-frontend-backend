@@ -47,14 +47,19 @@ const Books = () => {
     
     //In case user tried to visit url /protected without token, redirect 
     //to signin page
+    if(Object.keys(userLoginData) === 0){
+   
     if(token === 'Request failed with status code 500' 
         || token ==='Request failed with status code 401'){
-        dispatch(resetStore())
+        //dispatch(resetStore())
         navigate('/')
     }
+    }
+
+    
     
     dispatch(fetchPublishers())
-    dispatch(fetchAuthors())
+   // dispatch(fetchAuthors())
 
     if(deleteBookStatus.hasOwnProperty('message')){
       dispatch(fetchBooks())

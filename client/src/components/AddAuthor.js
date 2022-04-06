@@ -128,8 +128,6 @@ const [values, setValues] = useState({
 //book object in useEffect dependency array
 useEffect(()=>{
 
-    dispatch(fetchAuthors())
-
         setValues({
             id: Object.values(authors).length,
             name:'',
@@ -142,7 +140,7 @@ useEffect(()=>{
     if(authorAddStatus.hasOwnProperty('message')){
         dispatch(clearAddAuthorStatus())
         dispatch(clearUploadImageStatus())
-        dispatch(fetchAuthors())
+        //dispatch(fetchAuthors())
         dispatch(addAuthorModal(false))
     }
 

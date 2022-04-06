@@ -5,22 +5,25 @@ import { Typography } from '@mui/material'
 import Header from './core/Header'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { userToken, getUserLoginData } from '../features/librarySlice'
+import { getUserLogoutData, userToken, getUserLoginData, getBooks } from '../features/librarySlice'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 
 const Home = () => {
 
-    const dispatch = useDispatch()
-    const userLoginData = useSelector(getUserLoginData)
 
-    useEffect(() => {
-       
-        if(!userLoginData.hasOwnProperty("token")){
-            dispatch(userToken())
-            
-        }
-    }, [])
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const books = useSelector(getBooks)
     
+    useEffect(()=>{
+        
+       dispatch(userToken())
+
+
+    },[])
+
+
     return(
         <>
         <Header />  

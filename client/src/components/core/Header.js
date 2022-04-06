@@ -2,7 +2,11 @@ import React from "react";
 import { AppBar } from '@mui/material';
 import { Toolbar } from '@mui/material';
 import Box from '@mui/material/Box'
-import { getToken, getUserLoginData, resetStore } from "../../features/librarySlice";
+import { getToken,
+     getUserLoginData, 
+     resetStore,
+     userToken,
+getUserLogoutData} from "../../features/librarySlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { Typography } from "@mui/material";
@@ -17,6 +21,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout'
 import Buttons from "./Buttons";
 import { Tooltip } from "@mui/material";
+import { useEffect } from "react";
 
 const useStyles = makeStyles(theme=>({
     title:{
@@ -32,8 +37,7 @@ const Header = () => {
 const classes = useStyles()
 const dispatch = useDispatch()
 const navigate = useNavigate()
-const userToken = useSelector(getToken)
-
+const token = useSelector(getToken)
 
 const login = () => {
     navigate('/login')
@@ -87,9 +91,9 @@ return(
                     secondButton={redirectToTeamPage}
                     secondButtonIcon={<GroupsIcon />}
                     secondButtonText={'Our Team'}
-                    thirdButton={userToken.hasOwnProperty('message') ? logOut : login}
-                    thirdButtonIcon={userToken.hasOwnProperty('message') ? <LogoutIcon /> : <LoginIcon />}
-                    thirdButtonText={userToken.hasOwnProperty('message') ? 'Log Out' : 'Log In'} 
+                    thirdButton={token.hasOwnProperty('message') ? logOut : login}
+                    thirdButtonIcon={token.hasOwnProperty('message') ? <LogoutIcon /> : <LoginIcon />}
+                    thirdButtonText={token.hasOwnProperty('message') ? 'Log Out' : 'Log In'} 
                     />
                 </div> 
 
