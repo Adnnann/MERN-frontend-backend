@@ -153,8 +153,8 @@ useEffect(()=>{
             image:'',
             imageFile:''
         })
-        disableAuthorNameField ? dispatch(addBookModal(false))
-        : navigate('/books')
+        dispatch(addBookModal(false))
+       
     }
 
  },[bookAddStatus])

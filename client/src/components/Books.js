@@ -51,15 +51,14 @@ const Books = () => {
    
     if(token === 'Request failed with status code 500' 
         || token ==='Request failed with status code 401'){
-        //dispatch(resetStore())
+        dispatch(resetStore())
         navigate('/')
     }
     }
 
     dispatch(fetchBooks())
-    
     dispatch(fetchPublishers())
-   ///dispatch(fetchAuthors())
+    dispatch(fetchAuthors())
 
     if(deleteBookStatus.hasOwnProperty('message')){
       dispatch(fetchBooks())

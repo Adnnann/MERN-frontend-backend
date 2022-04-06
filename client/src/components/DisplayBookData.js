@@ -28,7 +28,7 @@ tabIndex={-1}>
                 <CardMedia 
                 component={'img'}
                 style={{maxWidth:'280px', marginLeft:'10px', marginTop:'10px'}}
-                src={`/images/${bookData[0].Image}.jpg`}></CardMedia>
+                src={bookData[0].Image.includes('/') ? bookData[0].Image : `/images/${bookData[0].Image}.jpg`}></CardMedia>
 
                 <DialogContent>
 

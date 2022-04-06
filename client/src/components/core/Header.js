@@ -3,10 +3,11 @@ import { AppBar } from '@mui/material';
 import { Toolbar } from '@mui/material';
 import Box from '@mui/material/Box'
 import { getToken,
-     getUserLoginData, 
-     resetStore,
-     userToken,
-getUserLogoutData} from "../../features/librarySlice";
+         getUserLoginData, 
+         resetStore,
+         userToken,
+         getUserLogoutData
+} from "../../features/librarySlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { Typography } from "@mui/material";
@@ -38,6 +39,7 @@ const classes = useStyles()
 const dispatch = useDispatch()
 const navigate = useNavigate()
 const token = useSelector(getToken)
+const userLogoutData = useSelector(getUserLogoutData)
 
 const login = () => {
     navigate('/login')
