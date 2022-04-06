@@ -41,13 +41,13 @@ const Books = () => {
 
   useEffect(()=>{
 
-    dispatch(fetchBooks())
+    
 
     dispatch(userToken())
-    
+
     //In case user tried to visit url /protected without token, redirect 
     //to signin page
-    if(Object.keys(userLoginData) === 0){
+    if(Object.keys(userLoginData).length === 0){
    
     if(token === 'Request failed with status code 500' 
         || token ==='Request failed with status code 401'){
@@ -56,10 +56,10 @@ const Books = () => {
     }
     }
 
-    
+    dispatch(fetchBooks())
     
     dispatch(fetchPublishers())
-   // dispatch(fetchAuthors())
+   ///dispatch(fetchAuthors())
 
     if(deleteBookStatus.hasOwnProperty('message')){
       dispatch(fetchBooks())
