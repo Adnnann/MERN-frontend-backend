@@ -41,7 +41,7 @@ const Publishers = () => {
 
   useEffect(()=>{
 
-    dispatch(fetchPublishers())
+    
     dispatch(userToken())
     //In case user tried to visit url /protected without token, redirect 
     //to signin page
@@ -51,7 +51,7 @@ const Publishers = () => {
         navigate('/')
     }
     
-  
+    dispatch(fetchPublishers())
     
     if(deletePublisherStatus.hasOwnProperty('message')){
       dispatch(fetchPublishers())
