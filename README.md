@@ -24,8 +24,9 @@ For importing files in database I used Mongo Compas. I have converted Excel file
 
 In order to use the app you shound change in server/config/config.js url for Atlas Mongo DB database and in client/.env file you should store following data:
 
-### DATABASE=library
-### PASSWORD=jOS3nAMP9GVYKdKH
+DATABASE=YOUR MONGODB NAME
+<br />
+PASSWORD=YOUR MONGODB PASSWORD
 
 For this app user data delivered with the assignment were used and they can be used for grading the app.
 
