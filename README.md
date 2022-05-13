@@ -28,16 +28,6 @@ DATABASE=YOUR MONGODB NAME
 <br />
 PASSWORD=YOUR MONGODB PASSWORD
 
-For this app user data delivered with the assignment were used and they can be used for grading the app.
-
-### User credentials
-Id	name	username	password	role
-1.	John Smith 	john	$ch00l	admin
-2.	Ana Boyle	ana	$ch00l	admin
-3.	Antonio Banderas	tony	$ch00l	user
-4.	Julio Iglesias	julio	$ch00l	user
-5.	Placido Domingo	place	$ch00l	user
-
 Default port for connection to the express server is 5000 and default proxy set in package.json in client folder is http://localhost:5000. In case you are using Mac change default port to 3001 as 5000 is not allowed on Mac. Also don't forget to change on proxy last part of the string (5000 to 3001)
 
 ## Redux toolkit
