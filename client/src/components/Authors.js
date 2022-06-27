@@ -128,7 +128,7 @@ const createRowsAuthors = () =>{
 
   if(Object.keys(authors).length !== 0){
 
-    authors.filter(item=>item.Name.includes(filterForAuthors))
+    authors.filter(item=>item.Name.toLowerCase().includes(filterForAuthors))
     .map(item=>{
 
       let date = dateFormat(new Date(item.Birthday),"dd/mm/yyyy")

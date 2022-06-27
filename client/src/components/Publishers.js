@@ -110,7 +110,7 @@ const createRowsPublishers = () =>{
 
   if(Object.keys(publishers).length !== 0){
 
-    publishers.filter(item=>item.name.includes(filterForPublishers))
+    publishers.filter(item=>item.name.toLowerCase().includes(filterForPublishers))
     .map(item=>{
 
       const firstCol = <div>{item.Id}</div>

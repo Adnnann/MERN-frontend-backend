@@ -1,4 +1,4 @@
-import Author from '../models/Authors.model'
+import Author from '../models/authors.model'
 import _ from 'lodash'
 import dbErrorHandlers from '../controllers/helpers/dbErrorHandlers'
 

@@ -60,7 +60,7 @@ const Books = () => {
     dispatch(fetchPublishers())
     dispatch(fetchAuthors())
 
-    if(deleteBookStatus.hasOwnProperty('message')){
+    if(deleteBookStatus?.message){
       dispatch(fetchBooks())
     }
 
@@ -98,7 +98,7 @@ const Books = () => {
       },
       //if user admin => display add column (for adding, editing and deleting books) 
       //else don't
-      token.hasOwnProperty('message') && jwtDecode(token.message).role === 'admin' ?
+      token?.message && jwtDecode(token.message).role === 'admin' ?
       { 
         id: 'edit',
         label:<Tooltip title='Add book'>
@@ -123,7 +123,7 @@ const createRowsBooks = () =>{
 
   if(Object.keys(books).length !== 0){
 
-    books.filter(item=>item.Title.includes(filterForBooks))
+    books.filter(item=>item.Title.toLowerCase().includes(filterForBooks))
     .map(item=>{
 
       const firstCol = <div>{item.Id}</div>

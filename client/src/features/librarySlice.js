@@ -231,10 +231,10 @@ const librarySlice = createSlice({
             state.addBookDataStatus = {}
         },
         filterBooks:(state, action) => {
-            state.filterForBooks = action.payload
+            state.filterForBooks = action.payload.toLowerCase()
         },
         filterAuthors:(state, action) => {
-            state.filterForAuthors = action.payload
+            state.filterForAuthors = action.payload.toLowerCase()
         },
         setAuthorData: (state, action) => {
             state.authorData = action.payload
@@ -264,7 +264,7 @@ const librarySlice = createSlice({
             state.bookDataModal = action.payload
         },
         filterPublishers:(state, action) => {
-            state.filterForPublishers = action.payload
+            state.filterForPublishers = action.payload.toLowerCase()
         },
         editPublisherModal:(state, action) => {
             state.editPublisherModalStatus = action.payload
